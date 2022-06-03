@@ -1,0 +1,10 @@
+{
+  "commands.tdcdata.freeze.add.success.single": "Added %d frozen ticks to %s (now %d)",
+  "commands.tdcdata.freeze.add.success.multiple": "Added %d frozen ticks to %d targets",
+  "commands.tdcdata.freeze.remove.success.single": "Removed %d frozen ticks from %s (now %d)",
+  "commands.tdcdata.freeze.remove.success.multiple": "Removed %d frozen ticks from %d targets",
+  "commands.tdcdata.freeze.set.success.single": "Set the frozen ticks of %s to %d",
+  "commands.tdcdata.freeze.set.success.multiple": "Set the frozen ticks of %d targets to %d",
+  "commands.tdcdata.get.current.success": "%s has %d frozen ticks",
+  "commands.tdcdata.get.max.success": "%s can have a maximum of %d frozen ticks"
+}
