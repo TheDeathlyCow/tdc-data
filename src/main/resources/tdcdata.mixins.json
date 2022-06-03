@@ -4,6 +4,7 @@
   "package": "com.github.thedeathlycow.tdcdata.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "predicate.LightPredicateMixin"
   ],
   "client": [
   ],
