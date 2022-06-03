@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "tdcdata",
+  "version": "${version}",
+
+  "name": "TheDeathlyCow's Datapack Utils",
+  "description": "Adds a number of new utilities for datapacks",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://github.com/TheDeathlyCow/",
+    "sources": "https://github.com/TheDeathlyCow/tdc-data"
+  },
+
+  "license": "MIT",
+  "icon": "assets/tdcdata/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.thedeathlycow.tdcdata.TdcData"
+    ]
+  },
+  "mixins": [
+    "tdcdata.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.18.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
