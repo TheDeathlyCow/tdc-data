@@ -3,6 +3,9 @@ package com.github.thedeathlycow.tdcdata.predicate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import net.minecraft.predicate.NumberRange;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +20,15 @@ public interface LightTypePredicate {
 
     void tdcdata$setShouldIncludeSkyDarkness(boolean shouldIncludeSkyDarkness);
 
+    default boolean tdcdata$test(ServerWorld world, BlockPos pos, NumberRange.IntRange range) {
+        LightType lightType = this.tdcdata$getLightType();
+        boolean includeSkydarkening = this.tdcdata$shouldIncludeSkyDarkness();
+        int lightLevel = world.getLightLevel(lightType, pos);
+        if (includeSkydarkening && lightType == LightType.SKY) {
+            lightLevel -= world.getAmbientDarkness();
+        }
+        return range.test(lightLevel);
+    }
 
     static LightType getTypeFromJson(JsonElement element) {
         String typeName;
