@@ -1,5 +1,6 @@
 package com.github.thedeathlycow.tdcdata.mixin.scoreboard.teamrules;
 
+import com.github.thedeathlycow.tdcdata.DatapackUtils;
 import com.github.thedeathlycow.tdcdata.scoreboard.RuledTeam;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
@@ -26,7 +27,7 @@ public class KeepInventoryOnDeathMixin {
             cancellable = true
     )
     private void stopLootDropIfOnKeepInvTeam(CallbackInfo ci) {
-        final PlayerEntity instance = (PlayerEntity) (Object) this;
+        PlayerEntity instance = (PlayerEntity) (Object) this;
         AbstractTeam playerTeam = instance.getScoreboardTeam();
 
         if (playerTeam instanceof RuledTeam ruledTeam && ruledTeam.tdcdata$shouldKeepInventory()) {
@@ -42,7 +43,8 @@ public class KeepInventoryOnDeathMixin {
             cancellable = true
     )
     private void stopXpDropIfOnKeepInvTeam(PlayerEntity player, CallbackInfoReturnable<Integer> cir) {
-        AbstractTeam playerTeam = player.getScoreboardTeam();
+        PlayerEntity instance = (PlayerEntity) (Object) this;
+        AbstractTeam playerTeam = instance.getScoreboardTeam();
         if (playerTeam instanceof RuledTeam ruledTeam && ruledTeam.tdcdata$shouldKeepInventory()) {
             cir.setReturnValue(0);
         }

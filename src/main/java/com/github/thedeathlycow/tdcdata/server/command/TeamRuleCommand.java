@@ -53,7 +53,7 @@ public class TeamRuleCommand {
      */
     private static int keepInventory(ServerCommandSource source, Team team, boolean value) {
         ((RuledTeam) team).tdcdata$setKeepInventory(value);
-        Text msg = new TranslatableText("commands.tdcdata.team.rule.keepinventory.success", team, value);
+        Text msg = new TranslatableText("commands.tdcdata.team.rule.keepinventory.success", team.getDisplayName().toString(), value);
         source.sendFeedback(msg, true);
         return 1;
     }

@@ -1,5 +1,6 @@
 package com.github.thedeathlycow.tdcdata.mixin.scoreboard.teamrules;
 
+import com.github.thedeathlycow.tdcdata.DatapackUtils;
 import com.github.thedeathlycow.tdcdata.scoreboard.RuledTeam;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameRules;
@@ -32,7 +33,6 @@ public class ServerPlayerKeepInventoryMixin {
             instance.experienceProgress = oldPlayer.experienceProgress;
             instance.setScore(oldPlayer.getScore());
         }
-
     }
 
 }
