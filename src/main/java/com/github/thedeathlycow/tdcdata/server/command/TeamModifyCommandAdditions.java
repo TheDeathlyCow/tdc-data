@@ -9,6 +9,7 @@ import net.minecraft.command.argument.TeamArgumentType;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TeamCommand;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
@@ -16,7 +17,11 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class TeamModifyCommandAdditions {
-    private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("commands.tdcdata.team.rule.keepinventory.unchanged"));
+
+    private static final String KEEPINV_SUCCESS = "Set Keep Inventory for team %s to %s";
+    private static final String KEEPINV_UNCHANGED = "Nothing changed. Keep Inventory already has that value";
+
+    private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new SimpleCommandExceptionType(new LiteralText(KEEPINV_UNCHANGED));
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         var keepInventoryRule = argument("team", TeamArgumentType.team())
@@ -64,7 +69,7 @@ public class TeamModifyCommandAdditions {
             throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create();
         } else {
             ruledTeam.tdcdata$setKeepInventory(value);
-            Text msg = new TranslatableText("commands.tdcdata.team.rule.keepinventory.success", team.getFormattedName(), value);
+            Text msg = new LiteralText(String.format(KEEPINV_SUCCESS, team.getFormattedName(), value));
             source.sendFeedback(msg, true);
         }
 

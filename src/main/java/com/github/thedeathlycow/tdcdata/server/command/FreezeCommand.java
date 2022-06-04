@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
@@ -17,6 +18,15 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 
 public class FreezeCommand {
+
+    private static final String ADD_SUCCESS_SINGLE = "Added %d frozen ticks to %s (now %d)";
+    private static final String ADD_SUCCESS_MULTIPLE = "Added %d frozen ticks to %d targets";
+    private static final String REMOVE_SUCCESS_SINGLE = "Removed %d frozen ticks from %s (now %d)";
+    private static final String REMOVE_SUCCESS_MULTIPLE = "Removed %d frozen ticks from %d targets";
+    private static final String SET_SUCCESS_SINGLE = "Set the frozen ticks of %s to %d";
+    private static final String SET_SUCCESS_MULTIPLE = "Set the frozen ticks of %d targets to %d";
+    private static final String GET_CURRENT_SUCCESS = "%s has %d frozen ticks";
+    private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d frozen ticks";
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 
@@ -146,14 +156,12 @@ public class FreezeCommand {
             target.setFrozenTicks(toSet);
         }
 
-        String successKey = "commands.tdcdata.freeze.set.success.";
-
         Text msg;
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
-            msg = new TranslatableText(successKey + "single", target.getDisplayName(), amount);
+            msg = new LiteralText(String.format(SET_SUCCESS_SINGLE, target.getDisplayName(), amount));
         } else {
-            msg = new TranslatableText(successKey + "multiple", targets.size(), amount);
+            msg = new LiteralText(String.format(SET_SUCCESS_MULTIPLE, targets.size(), amount));
         }
         source.sendFeedback(msg, true);
 
@@ -184,13 +192,15 @@ public class FreezeCommand {
             target.setFrozenTicks(adjustedAmount);
         }
 
-        String successKey = isRemoving ? "commands.tdcdata.freeze.remove.success." : "commands.tdcdata.freeze.add.success.";
+
         Text msg;
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
-            msg = new TranslatableText(successKey + "single", MathHelper.abs(amount), target.getDisplayName(), target.getFrozenTicks());
+            String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
+            msg = new LiteralText(String.format(format, MathHelper.abs(amount), target.getDisplayName(), target.getFrozenTicks()));
         } else {
-            msg = new TranslatableText(successKey + "multiple", MathHelper.abs(amount), targets.size());
+            String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
+            msg = new LiteralText(String.format(format, MathHelper.abs(amount), targets.size()));
         }
         source.sendFeedback(msg, true);
 
@@ -207,7 +217,7 @@ public class FreezeCommand {
      */
     private static int get(final ServerCommandSource source, final Entity target) {
         int amount = target.getFrozenTicks();
-        Text msg = new TranslatableText("commands.tdcdata.get.current.success", target.getDisplayName(), amount);
+        Text msg = new LiteralText(String.format(GET_CURRENT_SUCCESS, target.getDisplayName(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
@@ -223,7 +233,7 @@ public class FreezeCommand {
      */
     private static int getMax(final ServerCommandSource source, final Entity target) {
         int amount = target.getMinFreezeDamageTicks();
-        Text msg = new TranslatableText("commands.tdcdata.get.max.success", target.getDisplayName(), amount);
+        Text msg = new LiteralText(String.format(GET_MAX_SUCCESS, target.getDisplayName(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
