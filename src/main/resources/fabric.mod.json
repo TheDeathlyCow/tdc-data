@@ -3,7 +3,7 @@
   "id": "tdcdata",
   "version": "${version}",
 
-  "name": "TheDeathlyCow's Datapack Utils",
+  "name": "Datapack Utils",
   "description": "Adds a number of new utilities for datapacks",
   "authors": [
     "Me!"
@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.thedeathlycow.tdcdata.TdcData"
+      "com.github.thedeathlycow.tdcdata.DatapackUtils"
     ]
   },
   "mixins": [

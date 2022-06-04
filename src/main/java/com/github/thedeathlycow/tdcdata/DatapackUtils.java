@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TdcData implements ModInitializer {
+public class DatapackUtils implements ModInitializer {
 
     public static final String MODID = "tdcdata";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
