@@ -1,6 +1,7 @@
 package com.github.thedeathlycow.tdcdata;
 
 import com.github.thedeathlycow.tdcdata.server.command.FreezeCommand;
+import com.github.thedeathlycow.tdcdata.server.command.TeamRuleCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ public class DatapackUtils implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, dedicated) -> {
                     FreezeCommand.register(dispatcher);
+                    TeamRuleCommand.register(dispatcher);
                 }
         );
 

@@ -6,5 +6,6 @@
   "commands.tdcdata.freeze.set.success.single": "Set the frozen ticks of %s to %d",
   "commands.tdcdata.freeze.set.success.multiple": "Set the frozen ticks of %d targets to %d",
   "commands.tdcdata.get.current.success": "%s has %d frozen ticks",
-  "commands.tdcdata.get.max.success": "%s can have a maximum of %d frozen ticks"
+  "commands.tdcdata.get.max.success": "%s can have a maximum of %d frozen ticks",
+  "commands.tdcdata.team.rule.keepinventory.success": "Set Keep Inventory for %s to %b"
 }

@@ -11,7 +11,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Collection;
-import java.util.List;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -131,13 +130,13 @@ public class FreezeCommand {
      * Sets the frozen ticks (aka <code>TicksFrozen</code> in NBT data) of each
      * targeted entity. May clamp the amount between 0 and {@link Entity#getMinFreezeDamageTicks()}
      * (inclusive).
-     *
+     * <p>
      * Returns and displays in chat (to the source) the number of entities
      * affected by this command.
      *
-     * @param source The source of the command
-     * @param targets The collection of {@link Entity}s affected by this command
-     * @param amount The of frozen ticks to set on each target.
+     * @param source      The source of the command
+     * @param targets     The collection of {@link Entity}s affected by this command
+     * @param amount      The of frozen ticks to set on each target.
      * @param shouldClamp Whether the amount should be clamped
      * @return Returns the number of entities affected by this command.
      */
@@ -165,14 +164,14 @@ public class FreezeCommand {
      * Adds or removes a number of frozen ticks (aka <code>TicksFrozen</code> in NBT data)
      * to a list of entities. May clamp the amount between 0 and {@link Entity#getMinFreezeDamageTicks()}
      * (inclusive).
-     *
+     * <p>
      * Returns and displays in chat the number of entities affected by this command.
      *
-     * @param source The source of the command
-     * @param targets The targeted {@link Entity}s to adjust the frozen ticks of.
-     * @param amount The amount to adjust by
+     * @param source      The source of the command
+     * @param targets     The targeted {@link Entity}s to adjust the frozen ticks of.
+     * @param amount      The amount to adjust by
      * @param shouldClamp Whether to clamp the final amount. Defaults to true.
-     * @param isRemoving Whether this command is removing or adding.
+     * @param isRemoving  Whether this command is removing or adding.
      * @return Returns the number of entities affected by this command.
      */
     private static int adjust(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp, final boolean isRemoving) {
