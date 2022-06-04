@@ -58,8 +58,8 @@ public abstract class LightPredicateMixin implements LightTypePredicate {
         if (predicate != LightPredicate.ANY) {
             JsonObject lightJson = JsonHelper.asObject(json, "light");
 
-            if (lightJson.has("type")) {
-                JsonElement typeElement = lightJson.get("type");
+            if (lightJson.has("tdcdata.type")) {
+                JsonElement typeElement = lightJson.get("tdcdata.type");
                 LightType type = LightTypePredicate.getTypeFromJson(typeElement);
                 boolean includeSkydarkening = LightTypePredicate.getIncludeSkyDarknessFromJson(typeElement);
                 typePredicate.tdcdata$setLightType(type);
@@ -78,7 +78,7 @@ public abstract class LightPredicateMixin implements LightTypePredicate {
     )
     private void addTypeToJson(CallbackInfoReturnable<JsonElement> cir, JsonObject jsonObject) {
         if (this.tdcdata$lightType != null) {
-            jsonObject.add("type", LightTypePredicate.toJson(this));
+            jsonObject.add("tdcdata.type", LightTypePredicate.toJson(this));
         }
     }
 

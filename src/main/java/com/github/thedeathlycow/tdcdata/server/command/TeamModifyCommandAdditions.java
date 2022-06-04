@@ -21,7 +21,7 @@ public class TeamModifyCommandAdditions {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         var keepInventoryRule = argument("team", TeamArgumentType.team())
                 .then(
-                        literal("keepInventory")
+                        literal("tdcdata.keepInventory")
                                 .then(
                                         argument("keepInventory", BoolArgumentType.bool())
                                                 .executes(

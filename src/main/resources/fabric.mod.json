@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Datapack Utils",
-  "description": "Adds a number of new utilities for datapacks",
+  "description": "A server-side mod that adds new utilities for datapacks",
   "authors": [
     "TheDeathlyCow"
   ],
