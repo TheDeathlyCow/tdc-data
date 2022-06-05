@@ -16,7 +16,6 @@ import java.util.Collection;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-
 public class FreezeCommand {
 
     private static final String ADD_SUCCESS_SINGLE = "Added %d frozen ticks to %s (now %d)";

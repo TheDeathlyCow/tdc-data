@@ -4,6 +4,8 @@
   "package": "com.github.thedeathlycow.tdcdata.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "command.AddConditionLogicInvoker",
+    "command.ExecuteIfItemMixin",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
     "scoreboard.teamrules.SerializeRulesMixin",

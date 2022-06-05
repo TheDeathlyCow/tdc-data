@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "tdcdata",
   "version": "${version}",
-
   "name": "Datapack Utils",
   "description": "A server-side mod that adds new utilities for datapacks",
   "authors": [
@@ -10,12 +9,12 @@
   ],
   "contact": {
     "homepage": "https://github.com/TheDeathlyCow/",
-    "sources": "https://github.com/TheDeathlyCow/tdc-data"
+    "sources": "https://github.com/TheDeathlyCow/tdc-data",
+    "issues": "https://github.com/TheDeathlyCow/tdc-data/issues",
+    "wiki": "https://github.com/TheDeathlyCow/tdc-data/wiki"
   },
-
   "license": "MIT",
   "icon": "assets/tdcdata/icon.png",
-
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -25,7 +24,6 @@
   "mixins": [
     "tdcdata.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.14.6",
     "fabric": "*",
@@ -34,5 +32,6 @@
   },
   "suggests": {
     "another-mod": "*"
-  }
+  },
+  "accessWidener": "tdcdata.accesswidener"
 }
