@@ -34,7 +34,6 @@ public abstract class ExecuteIfItemMixin {
         throw new AssertionError();
     }
 
-
     @Inject(
             method = "addConditionArguments",
             at = @At(

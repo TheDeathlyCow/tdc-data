@@ -42,11 +42,16 @@ public interface LightTypePredicate {
     }
 
     static boolean getIncludeSkyDarknessFromJson(JsonElement element) {
+        final boolean defaultValue = true;
         if (element.isJsonPrimitive()) {
-            return true;
-        } else {
-            JsonObject typeJson = element.getAsJsonObject();
+            return defaultValue;
+        }
+
+        JsonObject typeJson = element.getAsJsonObject();
+        if (typeJson.has("include_sky_darkness")) {
             return typeJson.get("include_sky_darkness").getAsBoolean();
+        } else {
+            return defaultValue;
         }
     }
 
