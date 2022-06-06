@@ -3,6 +3,7 @@ package com.github.thedeathlycow.tdcdata.server.command;
 import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperation;
 import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.ScoreHolderArgumentType;
 import net.minecraft.command.argument.ScoreboardObjectiveArgumentType;
@@ -25,6 +26,14 @@ public class ScoreboardCommandAdditions {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 
         var randomOperation = literal("tdcdata.random")
+                .then(
+                        argument("bound", IntegerArgumentType.integer(1))
+                                .executes(
+                                        context -> {
+                                            return executeRandomWithBound(context.getSource(), IntegerArgumentType.getInteger(context, "bound"));
+                                        }
+                                )
+                )
                 .executes(
                         context -> {
                             return executeRandom(context.getSource());
@@ -56,6 +65,21 @@ public class ScoreboardCommandAdditions {
                                 .then(randomOperation)
                 )
         );
+    }
+
+    /**
+     * Generates a bounded random integer and displays it to
+     * the command source.
+     *
+     * @param source Command source.
+     * @param bound The maximum value for the random result. Must be positive.
+     * @return Returns the random number.
+     * @throws IllegalArgumentException If the bound is not positive.
+     */
+    private static int executeRandomWithBound(ServerCommandSource source, int bound) {
+        int result = source.getWorld().random.nextInt(bound);
+        source.sendFeedback(new LiteralText(String.format(RANDOM_SUCCESS, result)), true);
+        return result;
     }
 
     /**
