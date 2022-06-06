@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "com.github.thedeathlycow.tdcdata.DatapackUtils"
+    ],
+    "client": [
+      "com.github.thedeathlycow.tdcdata.DatapackUtilsClient"
     ]
   },
   "mixins": [
