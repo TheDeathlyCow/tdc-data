@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> {
 
-    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "rand", "log", "sqrt", "sin");
+    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "log", "sqrt", "sin");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
     private static final SimpleCommandExceptionType BAD_BOUND = new SimpleCommandExceptionType(new LiteralText("Random bound must be positive!"));
     public static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.div0"));
@@ -61,13 +61,6 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
         return switch (operator) {
             case "~" -> (a) -> ~a;
             case "!" -> (a) -> a == 0 ? 1 : 0;
-            case "rand" -> (a) -> {
-                if (a > 0) {
-                    return ThreadLocalRandom.current().nextInt(a);
-                } else {
-                    throw BAD_BOUND.create();
-                }
-            };
             case "sqrt" -> getDoubleFunction(Math::sqrt);
             case "ln" -> getDoubleFunction(Math::log);
             case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
@@ -102,7 +95,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "rand", "sqrt", "ln", "log2", "log", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
+        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "sqrt", "ln", "log2", "log", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
     }
 
     @Override
