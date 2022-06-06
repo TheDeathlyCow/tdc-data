@@ -22,7 +22,7 @@ public class CustomOperationMixin {
             )
     )
     private String[] addCustomOperatorsToSuggestions(String[] candidates) {
-        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "pow"};
+        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "exp"};
         return Stream.concat(Arrays.stream(candidates), Arrays.stream(bitwiseSuggestions))
                 .toArray(String[]::new);
     }
@@ -43,7 +43,7 @@ public class CustomOperationMixin {
             case "&=" -> (a, b) -> a & b;
             case "|=" -> (a, b) -> a | b;
             case "^=" -> (a, b) -> a ^ b;
-            case "pow" -> (a, b) -> MathHelper.floor(Math.pow(a, b));
+            case "exp" -> (a, b) -> MathHelper.floor(Math.pow(a, b));
             default -> null;
         };
 
