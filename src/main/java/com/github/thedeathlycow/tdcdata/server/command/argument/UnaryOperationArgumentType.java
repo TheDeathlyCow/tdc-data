@@ -9,6 +9,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.OperationArgumentType;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
@@ -26,10 +28,17 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> {
 
-    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "++", "rand", "sqrt", "sin");
+    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "rand", "sqrt", "sin");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
     private static final SimpleCommandExceptionType BAD_BOUND = new SimpleCommandExceptionType(new LiteralText("Random bound must be positive!"));
-    private static final int DOUBLE_FUNCTION_SCALE = 1000;
+
+    public static UnaryOperationArgumentType unaryOperation() {
+        return new UnaryOperationArgumentType();
+    }
+
+    public static UnaryOperation getUnaryOperation(CommandContext<ServerCommandSource> context, String name) {
+        return context.getArgument(name, UnaryOperation.class);
+    }
 
     @Override
     public UnaryOperation parse(StringReader reader) throws CommandSyntaxException {
@@ -46,17 +55,8 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
         }
     }
 
-    private static UnaryOperation getOperator(String operator) throws CommandSyntaxException {
+    private static UnaryOperation.UnaryIntOperation getOperator(String operator) throws CommandSyntaxException {
         return switch (operator) {
-            default -> getIntOperator(operator);
-        };
-    }
-
-    private static UnaryOperation.UnaryIntOperation getIntOperator(String operator) throws CommandSyntaxException {
-        return switch (operator) {
-            case "-" -> (a) -> -a;
-            case "--" -> (a) -> a--;
-            case "++" -> (a) -> a++;
             case "~" -> (a) -> ~a;
             case "!" -> (a) -> a == 0 ? 1 : 0;
             case "rand" -> (a) -> {
@@ -67,30 +67,39 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
                 }
             };
             case "sqrt" -> getDoubleFunction(Math::sqrt);
-            case "sin" -> getDoubleFunction(Math::sin);
-            case "cos" -> getDoubleFunction(Math::cos);
-            case "tan" -> getDoubleFunction(Math::tan);
-            case "asin" -> getDoubleFunction(Math::asin);
-            case "acos" -> getDoubleFunction(Math::acos);
-            case "atan" -> getDoubleFunction(Math::atan);
-            case "sinh" -> getDoubleFunction(Math::sinh);
-            case "cosh" -> getDoubleFunction(Math::cosh);
-            case "tanh" -> getDoubleFunction(Math::tanh);
+            case "ln" -> getDoubleFunction(Math::log);
+            case "log" -> getDoubleFunction(Math::log10);
+            case "sin" -> getTrigFunction(Math::sin);
+            case "cos" -> getTrigFunction(Math::cos);
+            case "tan" -> getTrigFunction(Math::tan);
+            case "asin" -> getTrigFunction(Math::asin);
+            case "acos" -> getTrigFunction(Math::acos);
+            case "atan" -> getTrigFunction(Math::atan);
+            case "sinh" -> getTrigFunction(Math::sinh);
+            case "cosh" -> getTrigFunction(Math::cosh);
+            case "tanh" -> getTrigFunction(Math::tanh);
             default -> throw INVALID_OPERATION.create();
+        };
+    }
+
+    private static UnaryOperation.UnaryIntOperation getTrigFunction(ScaledDoubleFunction function) {
+        return (thetaDegrees) -> {
+            final double radians = Math.toRadians(thetaDegrees);
+            final double result = function.apply(radians);
+            return (int) result;
         };
     }
 
     private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function) {
         return (thetaDegrees) -> {
-            final double radians = Math.toRadians(thetaDegrees);
-            final double result = function.apply(radians);
-            return MathHelper.floor(DOUBLE_FUNCTION_SCALE * result);
+            final double result = function.apply(thetaDegrees);
+            return (int) result;
         };
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(ImmutableList.of("-", "--", "++", "~", "!", "rand", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
+        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "rand", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
     }
 
     @Override
