@@ -10,7 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Collection;
@@ -33,7 +32,7 @@ public class FreezeCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 
         Command<ServerCommandSource> getCurrentLeaf = context -> {
-            return get(context.getSource(), EntityArgumentType.getEntity(context, "target"));
+            return getCurrent(context.getSource(), EntityArgumentType.getEntity(context, "target"));
         };
 
         var getCurrent = literal("current").executes(getCurrentLeaf);
@@ -174,12 +173,14 @@ public class FreezeCommand {
      * @param targets     The collection of {@link Entity}s affected by this command
      * @param amount      The of frozen ticks to set on each target.
      * @param shouldClamp Whether the amount should be clamped
-     * @return Returns the number of entities affected by this command.
+     * @return Returns the sum of the freezing ticks of each target after execution
      */
     private static int set(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp) {
+        int sum = 0;
         for (Entity target : targets) {
             int toSet = shouldClamp ? MathHelper.clamp(amount, 0, target.getMinFreezeDamageTicks()) : amount;
             target.setFrozenTicks(toSet);
+            sum += toSet;
         }
 
         Text msg;
@@ -191,7 +192,7 @@ public class FreezeCommand {
         }
         source.sendFeedback(msg, true);
 
-        return targets.size();
+        return sum;
     }
 
     /**
@@ -206,16 +207,17 @@ public class FreezeCommand {
      * @param amount      The amount to adjust by
      * @param shouldClamp Whether to clamp the final amount. Defaults to true.
      * @param isRemoving  Whether this command is removing or adding.
-     * @return Returns the number of entities affected by this command.
+     * @return Returns the sum of the freezing ticks of each target after execution
      */
     private static int adjust(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp, final boolean isRemoving) {
-
+        int sum = 0;
         for (Entity target : targets) {
             int adjustedAmount = target.getFrozenTicks() + amount;
             if (shouldClamp) {
                 adjustedAmount = MathHelper.clamp(amount, 0, target.getMinFreezeDamageTicks());
             }
             target.setFrozenTicks(adjustedAmount);
+            sum += adjustedAmount;
         }
 
 
@@ -230,7 +232,7 @@ public class FreezeCommand {
         }
         source.sendFeedback(msg, true);
 
-        return targets.size();
+        return sum;
     }
 
     /**
@@ -241,7 +243,7 @@ public class FreezeCommand {
      * @param target The targeted {@link Entity} of the command
      * @return Returns the amount of frozen ticks the target has.
      */
-    private static int get(final ServerCommandSource source, final Entity target) {
+    private static int getCurrent(final ServerCommandSource source, final Entity target) {
         int amount = target.getFrozenTicks();
         Text msg = new LiteralText(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().asString(), amount));
         source.sendFeedback(msg, true);
