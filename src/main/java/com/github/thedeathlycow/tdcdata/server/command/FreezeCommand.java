@@ -185,7 +185,7 @@ public class FreezeCommand {
         Text msg;
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
-            msg = new LiteralText(String.format(SET_SUCCESS_SINGLE, target.getDisplayName(), amount));
+            msg = new LiteralText(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().asString(), amount));
         } else {
             msg = new LiteralText(String.format(SET_SUCCESS_MULTIPLE, targets.size(), amount));
         }
@@ -223,7 +223,7 @@ public class FreezeCommand {
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
             String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
-            msg = new LiteralText(String.format(format, MathHelper.abs(amount), target.getDisplayName(), target.getFrozenTicks()));
+            msg = new LiteralText(String.format(format, MathHelper.abs(amount), target.getDisplayName().asString(), target.getFrozenTicks()));
         } else {
             String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
             msg = new LiteralText(String.format(format, MathHelper.abs(amount), targets.size()));
@@ -259,7 +259,7 @@ public class FreezeCommand {
      */
     private static int getMax(final ServerCommandSource source, final Entity target) {
         int amount = target.getMinFreezeDamageTicks();
-        Text msg = new LiteralText(String.format(GET_MAX_SUCCESS, target.getDisplayName(), amount));
+        Text msg = new LiteralText(String.format(GET_MAX_SUCCESS, target.getDisplayName().asString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
@@ -280,7 +280,7 @@ public class FreezeCommand {
     private static int getProgress(final ServerCommandSource source, final Entity target, final float scale) {
         float progress = target.getFreezingScale();
         int amount = MathHelper.floor(progress * scale);
-        Text msg = new LiteralText(String.format(GET_PROGRESS_SUCCESS, target.getDisplayName(), amount));
+        Text msg = new LiteralText(String.format(GET_PROGRESS_SUCCESS, target.getDisplayName().asString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
