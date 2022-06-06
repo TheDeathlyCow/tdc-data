@@ -1,7 +1,7 @@
 package com.github.thedeathlycow.tdcdata.mixin.command.argument;
 
 import net.minecraft.command.argument.OperationArgumentType;
-import net.minecraft.server.command.ScoreboardCommand;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 @Mixin(OperationArgumentType.class)
-public class BitwiseOperationMixin {
+public class CustomOperationMixin {
 
     @ModifyArg(
             method = "listSuggestions",
@@ -21,8 +21,8 @@ public class BitwiseOperationMixin {
                     target = "Lnet/minecraft/command/CommandSource;suggestMatching([Ljava/lang/String;Lcom/mojang/brigadier/suggestion/SuggestionsBuilder;)Ljava/util/concurrent/CompletableFuture;"
             )
     )
-    private String[] addBitwiseOperatorsToSuggestions(String[] candidates) {
-        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^="};
+    private String[] addCustomOperatorsToSuggestions(String[] candidates) {
+        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "pow"};
         return Stream.concat(Arrays.stream(candidates), Arrays.stream(bitwiseSuggestions))
                 .toArray(String[]::new);
     }
@@ -34,7 +34,7 @@ public class BitwiseOperationMixin {
             ),
             cancellable = true
     )
-    private static void parseBitwiseOperators(String operator, CallbackInfoReturnable<OperationArgumentType.IntOperator> cir) {
+    private static void parseCustomOperators(String operator, CallbackInfoReturnable<OperationArgumentType.IntOperator> cir) {
 
         OperationArgumentType.IntOperator parsedOperator = switch (operator) {
             case "<<=" -> (a, b) -> a << b;
@@ -43,6 +43,7 @@ public class BitwiseOperationMixin {
             case "&=" -> (a, b) -> a & b;
             case "|=" -> (a, b) -> a | b;
             case "^=" -> (a, b) -> a ^ b;
+            case "pow" -> (a, b) -> MathHelper.floor(Math.pow(a, b));
             default -> null;
         };
 
