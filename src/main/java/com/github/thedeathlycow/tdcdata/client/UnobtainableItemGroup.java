@@ -5,6 +5,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.block.LightBlock;
+import net.minecraft.block.StructureBlock;
+import net.minecraft.block.enums.StructureBlockMode;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -30,6 +32,7 @@ public class UnobtainableItemGroup {
                     stacks.add(Items.CHAIN_COMMAND_BLOCK.getDefaultStack());
                     stacks.add(Items.COMMAND_BLOCK_MINECART.getDefaultStack());
                     stacks.add(Items.STRUCTURE_BLOCK.getDefaultStack());
+                    stacks.add(getStructureDataBlock());
                     stacks.add(Items.JIGSAW.getDefaultStack());
                     stacks.add(Items.STRUCTURE_VOID.getDefaultStack());
                     stacks.add(Items.KNOWLEDGE_BOOK.getDefaultStack());
@@ -40,6 +43,14 @@ public class UnobtainableItemGroup {
                     stacks.addAll(getLightBlocks());
                 })
                 .build();
+    }
+
+    private static ItemStack getStructureDataBlock() {
+        ItemStack stack = Items.STRUCTURE_BLOCK.getDefaultStack();
+        NbtCompound nbt = new NbtCompound();
+        nbt.putString(StructureBlock.MODE.getName(), StructureBlockMode.DATA.asString());
+        stack.setSubNbt("BlockEntityTag", nbt);
+        return stack;
     }
 
     private static List<ItemStack> getLightBlocks() {

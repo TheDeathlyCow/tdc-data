@@ -1,6 +1,7 @@
 package com.github.thedeathlycow.tdcdata.mixin.command.argument;
 
 import net.minecraft.command.argument.OperationArgumentType;
+import net.minecraft.server.command.ScoreboardCommand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +22,7 @@ public class BitwiseOperationMixin {
             )
     )
     private String[] addBitwiseOperatorsToSuggestions(String[] candidates) {
-        String[] bitwiseSuggestions = {"<<", ">>", ">>>", "&", "|", "^"};
+        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^="};
         return Stream.concat(Arrays.stream(candidates), Arrays.stream(bitwiseSuggestions))
                 .toArray(String[]::new);
     }
@@ -29,19 +30,19 @@ public class BitwiseOperationMixin {
     @Inject(
             method = "getIntOperator",
             at = @At(
-                value = "HEAD"
+                    value = "HEAD"
             ),
             cancellable = true
     )
     private static void parseBitwiseOperators(String operator, CallbackInfoReturnable<OperationArgumentType.IntOperator> cir) {
 
         OperationArgumentType.IntOperator parsedOperator = switch (operator) {
-            case "<<" -> (a, b) -> a << b;
-            case ">>" -> (a, b) -> (a >> b);
-            case ">>>" -> (a, b) -> (a >>> b);
-            case "&" -> (a, b) -> a & b;
-            case "|" -> (a, b) -> a | b;
-            case "^" -> (a, b) -> a ^ b;
+            case "<<=" -> (a, b) -> a << b;
+            case ">>=" -> (a, b) -> (a >> b);
+            case ">>>=" -> (a, b) -> (a >>> b);
+            case "&=" -> (a, b) -> a & b;
+            case "|=" -> (a, b) -> a | b;
+            case "^=" -> (a, b) -> a ^ b;
             default -> null;
         };
 
