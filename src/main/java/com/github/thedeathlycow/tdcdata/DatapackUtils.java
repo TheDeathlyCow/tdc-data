@@ -1,6 +1,7 @@
 package com.github.thedeathlycow.tdcdata;
 
 import com.github.thedeathlycow.tdcdata.server.command.FreezeCommand;
+import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
 import com.github.thedeathlycow.tdcdata.server.command.TeamModifyCommandAdditions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -20,9 +21,10 @@ public class DatapackUtils implements ModInitializer {
                 (dispatcher, dedicated) -> {
                     FreezeCommand.register(dispatcher);
                     TeamModifyCommandAdditions.register(dispatcher);
+                    ScoreboardCommandAdditions.register(dispatcher);
                 }
         );
 
-        LOGGER.info("TheDeathlyCow's Datapack Utils initialized!");
+        LOGGER.info("Datapack Utilities initialized!");
     }
 }
