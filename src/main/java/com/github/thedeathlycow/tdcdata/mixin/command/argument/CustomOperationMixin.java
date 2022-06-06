@@ -24,7 +24,7 @@ public class CustomOperationMixin {
             )
     )
     private String[] addCustomOperatorsToSuggestions(String[] candidates) {
-        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "**="};
+        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "**=", "log="};
         return Stream.concat(Arrays.stream(candidates), Arrays.stream(bitwiseSuggestions))
                 .toArray(String[]::new);
     }

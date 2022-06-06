@@ -22,16 +22,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A scoreboard operator with only one operand.
- *
+ * <p>
  * This class is adapted from {@link net.minecraft.command.argument.OperationArgumentType}
  * for operations with only a single operand.
  */
 public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> {
 
-    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "rand", "sqrt", "sin");
+    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "rand", "log", "sqrt", "sin");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
     private static final SimpleCommandExceptionType BAD_BOUND = new SimpleCommandExceptionType(new LiteralText("Random bound must be positive!"));
     public static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.div0"));
+    private static final double NATURAL_LOG_OF_2 = Math.log(2);
 
     public static UnaryOperationArgumentType unaryOperation() {
         return new UnaryOperationArgumentType();
@@ -48,7 +49,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
         } else {
             int i = reader.getCursor();
 
-            while(reader.canRead() && reader.peek() != ' ') {
+            while (reader.canRead() && reader.peek() != ' ') {
                 reader.skip();
             }
 
@@ -69,6 +70,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
             };
             case "sqrt" -> getDoubleFunction(Math::sqrt);
             case "ln" -> getDoubleFunction(Math::log);
+            case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
             case "log" -> getDoubleFunction(Math::log10);
             case "sin" -> getTrigFunction(Math::sin);
             case "cos" -> getTrigFunction(Math::cos);
@@ -92,15 +94,15 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
     }
 
     private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function) {
-        return (thetaDegrees) -> {
-            final double result = function.apply(thetaDegrees);
+        return (a) -> {
+            final double result = function.apply(a);
             return (int) result;
         };
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "rand", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
+        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "rand", "sqrt", "ln", "log2", "log", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
     }
 
     @Override
