@@ -1,7 +1,9 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
@@ -26,21 +28,46 @@ public class FreezeCommand {
     private static final String SET_SUCCESS_MULTIPLE = "Set the frozen ticks of %d targets to %d";
     private static final String GET_CURRENT_SUCCESS = "%s has %d frozen ticks";
     private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d frozen ticks";
+    private static final String GET_PROGRESS_SUCCESS = "%s is %d%% frozen";
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+
+        Command<ServerCommandSource> getCurrentLeaf = context -> {
+            return get(context.getSource(), EntityArgumentType.getEntity(context, "target"));
+        };
+
+        var getCurrent = literal("current").executes(getCurrentLeaf);
+
+        var getMax = literal("max")
+                .executes(context -> {
+                    return getMax(context.getSource(), EntityArgumentType.getEntity(context, "target"));
+                });
+
+        var getProgress = literal("progress")
+                .then(
+                        argument("scale", FloatArgumentType.floatArg()).executes(context -> {
+                                    return getProgress(
+                                            context.getSource(),
+                                            EntityArgumentType.getEntity(context, "target"),
+                                            FloatArgumentType.getFloat(context, "scale")
+                                    );
+                                }
+                        )
+                ).executes(context -> {
+                    return getProgress(
+                            context.getSource(),
+                            EntityArgumentType.getEntity(context, "target"),
+                            100
+                    );
+                });
 
         var getSubCommand = literal("get")
                 .then(
                         argument("target", EntityArgumentType.entity())
-                                .executes(context -> {
-                                    return get(context.getSource(), EntityArgumentType.getEntity(context, "target"));
-                                })
-                                .then(
-                                        literal("max")
-                                                .executes(context -> {
-                                                    return getMax(context.getSource(), EntityArgumentType.getEntity(context, "target"));
-                                                })
-                                )
+                                .executes(getCurrentLeaf)
+                                .then(getCurrent)
+                                .then(getMax)
+                                .then(getProgress)
                 );
 
         var removeSubCommand = literal("remove")
@@ -211,12 +238,12 @@ public class FreezeCommand {
      * of the targeted {@link Entity}, and displays that amount in chat to the command source.
      *
      * @param source The source of the command
-     * @param target The target {@link Entity} of the command
+     * @param target The targeted {@link Entity} of the command
      * @return Returns the amount of frozen ticks the target has.
      */
     private static int get(final ServerCommandSource source, final Entity target) {
         int amount = target.getFrozenTicks();
-        Text msg = new LiteralText(String.format(GET_CURRENT_SUCCESS, target.getDisplayName(), amount));
+        Text msg = new LiteralText(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().asString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
@@ -227,12 +254,33 @@ public class FreezeCommand {
      * command source. Usually this is 140, but mods may be able to adjust this number.
      *
      * @param source The source of the command
-     * @param target The target {@link Entity} of the command
+     * @param target The targeted {@link Entity} of the command
      * @return Returns the amount of maximum number of frozen ticks the target can have.
      */
     private static int getMax(final ServerCommandSource source, final Entity target) {
         int amount = target.getMinFreezeDamageTicks();
         Text msg = new LiteralText(String.format(GET_MAX_SUCCESS, target.getDisplayName(), amount));
+        source.sendFeedback(msg, true);
+        return amount;
+    }
+
+    /**
+     * Gets the freezing tick progress of the targeted {@link Entity}, scales it
+     * by the given scale, and displays this result in chat. Essentially a way
+     * to invoke {@link Entity#getFreezingScale()} in game.
+     * <p>
+     * The result can be formally expressed as <code>floor({@link Entity#getFreezingScale()} * scale)</code>
+     * </p>
+     *
+     * @param source The source of the command
+     * @param target The targeted {@link Entity} of the command
+     * @param scale  The scale by which to multiply the result of {@link Entity#getFreezingScale()} by.
+     * @return Returns the amount of maximum number of frozen ticks the target can have.
+     */
+    private static int getProgress(final ServerCommandSource source, final Entity target, final float scale) {
+        float progress = target.getFreezingScale();
+        int amount = MathHelper.floor(progress * scale);
+        Text msg = new LiteralText(String.format(GET_PROGRESS_SUCCESS, target.getDisplayName(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
