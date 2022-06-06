@@ -44,11 +44,11 @@ public abstract class ExecuteIfItemMixin {
     private static void addItemCondition(CommandNode<ServerCommandSource> root, LiteralArgumentBuilder<ServerCommandSource> argumentBuilder, boolean positive, CallbackInfoReturnable<ArgumentBuilder<ServerCommandSource, ?>> cir) {
 
         var entityItemCondition = literal("entity").then(
-                argument("source", EntityArgumentType.entity()).then(
-                        argument("sourceSlot", ItemSlotArgumentType.itemSlot()).then(
+                argument("target", EntityArgumentType.entity()).then(
+                        argument("slot", ItemSlotArgumentType.itemSlot()).then(
                                 invokeAddConditonLogic(root, argument("itemPredicate", ItemPredicateArgumentType.itemPredicate()), positive, (context) -> {
-                                    Entity entity = EntityArgumentType.getEntity(context, "source");
-                                    int slot = ItemSlotArgumentType.getItemSlot(context, "sourceSlot");
+                                    Entity entity = EntityArgumentType.getEntity(context, "target");
+                                    int slot = ItemSlotArgumentType.getItemSlot(context, "slot");
                                     Predicate<ItemStack> itemPredicate = ItemPredicateArgumentType.getItemPredicate(context, "itemPredicate");
                                     return ExecuteIfItemCommand.testEntityItemCondition(context.getSource(), entity, slot, itemPredicate);
                                 })
@@ -58,10 +58,10 @@ public abstract class ExecuteIfItemMixin {
 
         var blockItemCondition = literal("block").then(
                 argument("pos", BlockPosArgumentType.blockPos()).then(
-                        argument("sourceSlot", ItemSlotArgumentType.itemSlot()).then(
+                        argument("slot", ItemSlotArgumentType.itemSlot()).then(
                                 invokeAddConditonLogic(root, argument("itemPredicate", ItemPredicateArgumentType.itemPredicate()), positive, (context) -> {
                                     BlockPos pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                    int slot = ItemSlotArgumentType.getItemSlot(context, "sourceSlot");
+                                    int slot = ItemSlotArgumentType.getItemSlot(context, "slot");
                                     Predicate<ItemStack> itemPredicate = ItemPredicateArgumentType.getItemPredicate(context, "itemPredicate");
                                     return ExecuteIfItemCommand.testBlockItemCondition(context.getSource(), pos, slot, itemPredicate);
                                 })
