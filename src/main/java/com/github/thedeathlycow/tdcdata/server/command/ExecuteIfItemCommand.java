@@ -14,6 +14,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.function.Predicate;
+
 public class ExecuteIfItemCommand {
 
     private static final DynamicCommandExceptionType NO_SUCH_SLOT_TARGET_EXCEPTION = new DynamicCommandExceptionType((slot) -> {
@@ -24,16 +26,16 @@ public class ExecuteIfItemCommand {
         return new TranslatableText("commands.item.target.not_a_container", x, y, z);
     });
 
-    public static boolean testEntityItemCondition(ServerCommandSource source, Entity entity, int itemSlot, ItemStackArgument testItem) throws CommandSyntaxException {
+    public static boolean testEntityItemCondition(ServerCommandSource source, Entity entity, int itemSlot, Predicate<ItemStack> itemPredicate) throws CommandSyntaxException {
         StackReference stack = entity.getStackReference(itemSlot);
         if (stack != StackReference.EMPTY) {
-            return testItem.test(stack.get());
+            return itemPredicate.test(stack.get());
         } else {
             throw NO_SUCH_SLOT_TARGET_EXCEPTION.create(itemSlot);
         }
     }
 
-    public static boolean testBlockItemCondition(ServerCommandSource source, BlockPos pos, int itemSlot, ItemStackArgument testItem) throws CommandSyntaxException {
+    public static boolean testBlockItemCondition(ServerCommandSource source, BlockPos pos, int itemSlot, Predicate<ItemStack> itemPredicate) throws CommandSyntaxException {
         ServerWorld world = source.getWorld();
         Inventory inventory = getInventoryAtPos(world, pos);
 
@@ -43,7 +45,7 @@ public class ExecuteIfItemCommand {
         }
 
         ItemStack stack = inventory.getStack(itemSlot);
-        return testItem.test(stack);
+        return itemPredicate.test(stack);
     }
 
     private static Inventory getInventoryAtPos(ServerWorld world, BlockPos pos) throws CommandSyntaxException {
