@@ -1,3 +1,4 @@
 accessWidener	v1	named
 accessible  class   net/minecraft/server/command/ExecuteCommand$Condition
 
+accessible  class   net/minecraft/command/argument/OperationArgumentType$IntOperator
