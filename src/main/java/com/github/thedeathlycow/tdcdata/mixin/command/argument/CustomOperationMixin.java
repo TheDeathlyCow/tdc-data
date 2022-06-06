@@ -1,5 +1,7 @@
 package com.github.thedeathlycow.tdcdata.mixin.command.argument;
 
+import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
+import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
 import net.minecraft.command.argument.OperationArgumentType;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +46,13 @@ public class CustomOperationMixin {
             case "|=" -> (a, b) -> a | b;
             case "^=" -> (a, b) -> a ^ b;
             case "**=" -> (a, b) -> MathHelper.floor(Math.pow(a, b));
+            case "log=" -> (a, b) -> {
+                double baseLog = Math.log(b);
+                if (baseLog == 0) {
+                    throw UnaryOperationArgumentType.DIVISION_ZERO_EXCEPTION.create();
+                }
+                return (int) (Math.log(a) / baseLog);
+            };
             default -> null;
         };
 

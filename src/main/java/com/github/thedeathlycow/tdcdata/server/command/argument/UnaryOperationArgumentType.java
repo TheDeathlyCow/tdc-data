@@ -31,6 +31,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
     private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "rand", "sqrt", "sin");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
     private static final SimpleCommandExceptionType BAD_BOUND = new SimpleCommandExceptionType(new LiteralText("Random bound must be positive!"));
+    public static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.div0"));
 
     public static UnaryOperationArgumentType unaryOperation() {
         return new UnaryOperationArgumentType();
