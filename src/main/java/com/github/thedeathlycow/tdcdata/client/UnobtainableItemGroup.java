@@ -11,6 +11,9 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -18,6 +21,9 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class UnobtainableItemGroup {
+
+    private static final Text STRUCTURE_DATA_BLOCK_NAME = new TranslatableText("block.tdcdata.command_block.data")
+            .setStyle(Style.EMPTY.withItalic(false));
 
     public static ItemGroup create() {
         return FabricItemGroupBuilder.create(
@@ -50,6 +56,7 @@ public class UnobtainableItemGroup {
         NbtCompound nbt = new NbtCompound();
         nbt.putString(StructureBlock.MODE.getName(), StructureBlockMode.DATA.asString());
         stack.setSubNbt("BlockEntityTag", nbt);
+        stack.setCustomName(STRUCTURE_DATA_BLOCK_NAME);
         return stack;
     }
 
