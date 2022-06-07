@@ -40,7 +40,7 @@ public class ScoreboardCommandAdditions {
                         }
                 );
 
-        var unaryOperation = literal("tdcdata.math")
+        var unaryOperation = literal("tdcdata.function")
                 .then(
                         argument("operation", UnaryOperationArgumentType.unaryOperation()).then(
                                 argument("targets", ScoreHolderArgumentType.scoreHolders()).suggests(ScoreHolderArgumentType.SUGGESTION_PROVIDER).then(
