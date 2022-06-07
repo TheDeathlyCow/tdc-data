@@ -24,7 +24,7 @@ public class CustomOperationMixin {
             )
     )
     private String[] addCustomOperatorsToSuggestions(String[] candidates) {
-        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "**=", "log"};
+        String[] bitwiseSuggestions = {"<<=", ">>=", ">>>=", "&=", "|=", "^=", "**=", "log_b"};
         return Stream.concat(Arrays.stream(candidates), Arrays.stream(bitwiseSuggestions))
                 .toArray(String[]::new);
     }
@@ -46,7 +46,7 @@ public class CustomOperationMixin {
             case "|=" -> (a, b) -> a | b;
             case "^=" -> (a, b) -> a ^ b;
             case "**=" -> (a, b) -> MathHelper.floor(Math.pow(a, b));
-            case "log" -> (a, b) -> {
+            case "log_b" -> (a, b) -> {
                 double baseLog = Math.log(b);
                 if (baseLog == 0) {
                     throw UnaryOperationArgumentType.DIVISION_ZERO_EXCEPTION.create();
