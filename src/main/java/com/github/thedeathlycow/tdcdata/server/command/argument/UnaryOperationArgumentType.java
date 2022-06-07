@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> {
 
-    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "log", "sqrt", "sin");
+    private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "ln", "sqrt", "rand");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
     private static final SimpleCommandExceptionType BAD_BOUND = new SimpleCommandExceptionType(new LiteralText("Random bound must be positive!"));
     public static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.div0"));
@@ -65,6 +65,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
             case "ln" -> getDoubleFunction(Math::log);
             case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
             case "log" -> getDoubleFunction(Math::log10);
+            case "rand" -> (a) -> ThreadLocalRandom.current().nextInt();
             default -> throw INVALID_OPERATION.create();
         };
     }
@@ -78,7 +79,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "sqrt", "ln", "log2", "log"), builder);
+        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "sqrt", "ln", "log2", "log", "rand"), builder);
     }
 
     @Override
