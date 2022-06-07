@@ -65,24 +65,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
             case "ln" -> getDoubleFunction(Math::log);
             case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
             case "log" -> getDoubleFunction(Math::log10);
-            case "sin" -> getTrigFunction(Math::sin);
-            case "cos" -> getTrigFunction(Math::cos);
-            case "tan" -> getTrigFunction(Math::tan);
-            case "asin" -> getTrigFunction(Math::asin);
-            case "acos" -> getTrigFunction(Math::acos);
-            case "atan" -> getTrigFunction(Math::atan);
-            case "sinh" -> getTrigFunction(Math::sinh);
-            case "cosh" -> getTrigFunction(Math::cosh);
-            case "tanh" -> getTrigFunction(Math::tanh);
             default -> throw INVALID_OPERATION.create();
-        };
-    }
-
-    private static UnaryOperation.UnaryIntOperation getTrigFunction(ScaledDoubleFunction function) {
-        return (thetaDegrees) -> {
-            final double radians = Math.toRadians(thetaDegrees);
-            final double result = function.apply(radians);
-            return (int) result;
         };
     }
 
@@ -95,7 +78,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "sqrt", "ln", "log2", "log", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh"), builder);
+        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "sqrt", "ln", "log2", "log"), builder);
     }
 
     @Override
