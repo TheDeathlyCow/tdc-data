@@ -2,7 +2,7 @@
 
 CurseForge mod page: https://www.curseforge.com/minecraft/mc-mods/tdc-data
 
-Modrinth mod page: https://modrinth.com/mod/tdc-data/version/0.1.0+1.18.2
+Modrinth mod page: https://modrinth.com/mod/tdc-data/
 
 # Documentation
 
