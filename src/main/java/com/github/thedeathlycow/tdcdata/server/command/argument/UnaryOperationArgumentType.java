@@ -62,7 +62,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
         return switch (operator) {
             case "~" -> (a) -> ~a;
             case "!" -> (a) -> a == 0 ? 1 : 0;
-            case "abs" -> getDoubleFunction(Math::abs, false);
+            case "abs" -> Math::abs;
             case "sqrt" -> getDoubleFunction(Math::sqrt);
             case "ln" -> getDoubleFunction(Math::log);
             case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
