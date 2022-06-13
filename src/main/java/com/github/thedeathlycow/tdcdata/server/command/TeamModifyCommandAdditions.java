@@ -18,7 +18,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class TeamModifyCommandAdditions {
 
-    private static final String KEEPINV_SUCCESS = "Set Keep Inventory for team %s to %s";
+    private static final String KEEPINV_SUCCESS = "Set Keep Inventory for team [%s] to %s";
     private static final String KEEPINV_UNCHANGED = "Nothing changed. Keep Inventory already has that value";
 
     private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new SimpleCommandExceptionType(new LiteralText(KEEPINV_UNCHANGED));
@@ -69,7 +69,7 @@ public class TeamModifyCommandAdditions {
             throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create();
         } else {
             ruledTeam.tdcdata$setKeepInventory(value);
-            Text msg = new LiteralText(String.format(KEEPINV_SUCCESS, team.getFormattedName(), value));
+            Text msg = new LiteralText(String.format(KEEPINV_SUCCESS, team.getDisplayName().asString(), value));
             source.sendFeedback(msg, true);
         }
 
