@@ -80,7 +80,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "sqrt", "ln", "log2", "log", "rand"), builder);
+        return CommandSource.suggestMatching(ImmutableList.of("~", "!", "abs", "sqrt", "ln", "log2", "log", "rand"), builder);
     }
 
     @Override
