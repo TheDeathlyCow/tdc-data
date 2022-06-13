@@ -30,7 +30,8 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "ln", "sqrt", "rand");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
-    private static final SimpleCommandExceptionType BAD_BOUND = new SimpleCommandExceptionType(new LiteralText("Random bound must be positive!"));
+    private static final SimpleCommandExceptionType NOT_POSITIVE_INPUT = new SimpleCommandExceptionType(new LiteralText("Input score must be positive!"));
+
     public static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.div0"));
     private static final double NATURAL_LOG_OF_2 = Math.log(2);
 
@@ -61,7 +62,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
         return switch (operator) {
             case "~" -> (a) -> ~a;
             case "!" -> (a) -> a == 0 ? 1 : 0;
-            case "abs" -> MathHelper::abs;
+            case "abs" -> getDoubleFunction(Math::abs, false);
             case "sqrt" -> getDoubleFunction(Math::sqrt);
             case "ln" -> getDoubleFunction(Math::log);
             case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
@@ -72,7 +73,16 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
     }
 
     private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function) {
+        return getDoubleFunction(function, true);
+    }
+
+    private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function, boolean mustBePositive) {
         return (a) -> {
+
+            if (mustBePositive && a <= 0) {
+                throw NOT_POSITIVE_INPUT.create();
+            }
+
             final double result = function.apply(a);
             return (int) result;
         };
