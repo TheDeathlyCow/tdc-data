@@ -1,4 +1,4 @@
-# Datapack Utils
+# Datapack Extensions
 
 CurseForge mod page: https://www.curseforge.com/minecraft/mc-mods/tdc-data
 
