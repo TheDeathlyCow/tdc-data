@@ -214,7 +214,7 @@ public class FreezeCommand {
         for (Entity target : targets) {
             int adjustedAmount = target.getFrozenTicks() + amount;
             if (shouldClamp) {
-                adjustedAmount = MathHelper.clamp(amount, 0, target.getMinFreezeDamageTicks());
+                adjustedAmount = MathHelper.clamp(adjustedAmount, 0, target.getMinFreezeDamageTicks());
             }
             target.setFrozenTicks(adjustedAmount);
             sum += adjustedAmount;
