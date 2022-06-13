@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "tdcdata",
   "version": "${version}",
-  "name": "Datapack Utils",
-  "description": "A server-side mod that adds new utilities for datapacks",
+  "name": "Datapack Extensions",
+  "description": "A server-side mod that extends the power of datapacks",
   "authors": [
     "TheDeathlyCow"
   ],
