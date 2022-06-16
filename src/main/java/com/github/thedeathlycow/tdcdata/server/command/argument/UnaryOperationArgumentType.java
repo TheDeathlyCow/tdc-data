@@ -9,11 +9,9 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.OperationArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,9 +28,8 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "ln", "sqrt", "rand");
     private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
-    private static final SimpleCommandExceptionType NOT_POSITIVE_INPUT = new SimpleCommandExceptionType(new LiteralText("Input score must be positive!"));
-
-    public static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.div0"));
+    public static final SimpleCommandExceptionType OUT_OF_DOMAIN = new SimpleCommandExceptionType(new LiteralText("Input score is out of the domain for this function!"));
+    public static final SimpleCommandExceptionType INVALID_BASE = new SimpleCommandExceptionType(new LiteralText("Base score must be greater than one!"));
     private static final double NATURAL_LOG_OF_2 = Math.log(2);
 
     public static UnaryOperationArgumentType unaryOperation() {
@@ -63,7 +60,7 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
             case "~" -> (a) -> ~a;
             case "!" -> (a) -> a == 0 ? 1 : 0;
             case "abs" -> Math::abs;
-            case "sqrt" -> getDoubleFunction(Math::sqrt);
+            case "sqrt" -> getDoubleFunction(Math::sqrt, input -> input >= 0);
             case "ln" -> getDoubleFunction(Math::log);
             case "log2" -> getDoubleFunction((a) -> Math.log(a) / NATURAL_LOG_OF_2);
             case "log" -> getDoubleFunction(Math::log10);
@@ -73,18 +70,16 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
     }
 
     private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function) {
-        return getDoubleFunction(function, true);
+        return getDoubleFunction(function, (input -> input > 0));
     }
 
-    private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function, boolean mustBePositive) {
+    private static UnaryOperation.UnaryIntOperation getDoubleFunction(ScaledDoubleFunction function, DomainTester domainTester) {
         return (a) -> {
-
-            if (mustBePositive && a <= 0) {
-                throw NOT_POSITIVE_INPUT.create();
+            if (domainTester.inDomain(a)) {
+                final double result = function.apply(a);
+                return (int) result;
             }
-
-            final double result = function.apply(a);
-            return (int) result;
+            throw OUT_OF_DOMAIN.create();
         };
     }
 
@@ -100,6 +95,11 @@ public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> 
 
     @FunctionalInterface
     public interface ScaledDoubleFunction {
-        double apply(double thetaRadians);
+        double apply(double input);
+    }
+
+    @FunctionalInterface
+    public interface DomainTester {
+        boolean inDomain(double input);
     }
 }

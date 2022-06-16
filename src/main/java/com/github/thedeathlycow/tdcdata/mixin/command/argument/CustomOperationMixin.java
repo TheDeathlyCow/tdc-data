@@ -1,8 +1,9 @@
 package com.github.thedeathlycow.tdcdata.mixin.command.argument;
 
-import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
 import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.argument.OperationArgumentType;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,6 +16,8 @@ import java.util.stream.Stream;
 
 @Mixin(OperationArgumentType.class)
 public class CustomOperationMixin {
+
+    private static final SimpleCommandExceptionType tdcdata$NON_POSITIVE_INPUT = new SimpleCommandExceptionType(new LiteralText("Input score must be positive!"));
 
     @ModifyArg(
             method = "listSuggestions",
@@ -47,11 +50,13 @@ public class CustomOperationMixin {
             case "^=" -> (a, b) -> a ^ b;
             case "**=" -> (a, b) -> MathHelper.floor(Math.pow(a, b));
             case "log_b" -> (a, b) -> {
-                double baseLog = Math.log(b);
-                if (baseLog == 0) {
-                    throw UnaryOperationArgumentType.DIVISION_ZERO_EXCEPTION.create();
+                if (a <= 0) {
+                    throw tdcdata$NON_POSITIVE_INPUT.create();
                 }
-                return (int) (Math.log(a) / baseLog);
+                if (b <= 1) {
+                    throw UnaryOperationArgumentType.INVALID_BASE.create();
+                }
+                return (int) (Math.log(a) / Math.log(b));
             };
             default -> null;
         };
