@@ -26,7 +26,7 @@ public abstract class ExecuteStoreAttributeCommandMixin {
     private static void addAttributeStoreArgument(LiteralCommandNode<ServerCommandSource> node, LiteralArgumentBuilder<ServerCommandSource> builder, boolean requestResult, CallbackInfoReturnable<ArgumentBuilder<ServerCommandSource, ?>> cir){
         builder.then(literal("attribute").then(
                 argument("target", EntityArgumentType.entity()).then(
-                        argument("attribute", RegistryKeyArgumentType.registryKey(Registry.ATTRIBUTE_KEY)).then(
+                        argument("tdcdata.attribute", RegistryKeyArgumentType.registryKey(Registry.ATTRIBUTE_KEY)).then(
                                 literal("base").then(
                                         argument("scale", DoubleArgumentType.doubleArg())
                                                 .redirect(node, context -> ExecuteStoreAttributeCommand.executeStoreAttribute(

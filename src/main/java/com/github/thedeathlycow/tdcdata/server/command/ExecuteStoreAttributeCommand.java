@@ -20,13 +20,15 @@ public class ExecuteStoreAttributeCommand {
             double value = (requestResult ?  result : (success ? 1 : 0)) * scale;
             if (target instanceof LivingEntity livingEntity){
                 EntityAttributeInstance inst = livingEntity.getAttributeInstance(attribute);
-                if (inst != null)
+                if (inst != null) {
                     inst.setBaseValue(value);
-                else
+                } else {
                     source.sendError(new TranslatableText("commands.attribute.failed.no_attribute", livingEntity.getName(), new TranslatableText(attribute.getTranslationKey())));
+                }
             }
-            else
+            else {
                 source.sendError(new TranslatableText("commands.attribute.failed.entity", target.getName()));
+            }
         }, BINARY_RESULT_CONSUMER);
     }
 }
