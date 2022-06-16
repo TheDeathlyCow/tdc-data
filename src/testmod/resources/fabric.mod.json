@@ -7,7 +7,8 @@
   "license": "MIT",
   "entrypoints": {
     "fabric-gametest" : [
-      "com.github.thedeathlycow.tdcdata.test.execute_command.ExecuteIfItemTests"
+      "com.github.thedeathlycow.tdcdata.test.execute_command.ExecuteIfItemTests",
+      "com.github.thedeathlycow.tdcdata.test.scoreboard_players.OperationTests"
     ]
   }
 }
