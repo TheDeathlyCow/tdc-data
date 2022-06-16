@@ -26,6 +26,18 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	afterEvaluate {
+		subprojects.each {
+			api project(path: ":${it.name}", configuration: "namedElements")
+
+			if (!(it.name in devOnlyModules)) {
+				include project("${it.name}:")
+			}
+
+			testmodImplementation project("${it.name}:").sourceSets.testmod.output
+		}
+	}
 }
 
 processResources {
@@ -71,6 +83,31 @@ publishing {
 	}
 }
 
+
+sourceSets {
+	testmod {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+		compileClasspath += main.output
+		runtimeClasspath += main.output
+	}
+}
+
 loom {
 	accessWidenerPath = file("src/main/resources/tdcdata.accesswidener")
+
+	runs {
+		testmodClient {
+			client()
+			ideConfigGenerated project.rootProject == project
+			name = "Testmod Client"
+			source sourceSets.testmod
+		}
+		testmodServer {
+			server()
+			ideConfigGenerated project.rootProject == project
+			name = "Testmod Server"
+			source sourceSets.testmod
+		}
+	}
 }
