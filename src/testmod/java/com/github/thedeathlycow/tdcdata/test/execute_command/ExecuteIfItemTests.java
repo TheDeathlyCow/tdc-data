@@ -22,24 +22,70 @@ import net.minecraft.util.math.BlockPos;
 
 public class ExecuteIfItemTests {
 
-    @GameTest(structureName = "tdcdata-test:execute.ifitem.diamond_helmet_head_slot")
-    public void playerWithItemInSlotPassesCheck(TestContext context) {
+    private static final BlockPos BUTTON_POS = new BlockPos(2, 3, 2);
+
+    //* IF tests
+
+    @GameTest(structureName = "tdcdata-test:execute.if.item.test_head_slot")
+    public void itemInHeadSlotPassesIfCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithArmor(context);
-        BlockPos buttonPos = new BlockPos(0, 2, 0);
-        context.pushButton(buttonPos);
-        context.expectBlockAtEnd(Blocks.LIME_WOOL, buttonPos);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.ifitem.diamond_helmet_head_slot")
-    public void playerWithoutItemInSlotFailsCheck(TestContext context) {
+    @GameTest(structureName = "tdcdata-test:execute.if.item.test_head_slot")
+    public void noItemInHeadSlotFailsIfCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithoutArmor(context);
-        BlockPos buttonPos = new BlockPos(0, 2, 0);
-        context.pushButton(buttonPos);
-        context.expectBlockAtEnd(Blocks.STONE_BUTTON, buttonPos);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
+    }
+
+    @GameTest(structureName = "tdcdata-test:execute.if.item.test_villager0_slot")
+    public void itemInHeadFailsVillager0IfCheck(TestContext context) {
+        VillagerEntity villager = createVillagerWithArmor(context);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
+    }
+
+    @GameTest(structureName = "tdcdata-test:execute.if.item.test_villager0_slot")
+    public void noItemInHeadFailsVillager0IfCheck(TestContext context) {
+        VillagerEntity villager = createVillagerWithoutArmor(context);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
+    }
+
+    //* UNLESS tests
+
+    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_head_slot")
+    public void itemInHeadSlotFailsUnlessCheck(TestContext context) {
+        VillagerEntity villager = createVillagerWithArmor(context);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
+    }
+
+    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_head_slot")
+    public void noItemInHeadSlotPassesUnlessCheck(TestContext context) {
+        VillagerEntity villager = createVillagerWithoutArmor(context);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
+    }
+
+    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_villager0_slot")
+    public void itemInHeadPassesVillager0UnlessCheck(TestContext context) {
+        VillagerEntity villager = createVillagerWithArmor(context);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
+    }
+
+    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_villager0_slot")
+    public void noItemInHeadPassesVillager0UnlessCheck(TestContext context) {
+        VillagerEntity villager = createVillagerWithoutArmor(context);
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
     private static VillagerEntity createVillagerWithArmor(TestContext context) {
-        VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, 0, 2, 0);
+        VillagerEntity villager = context.spawnEntity(EntityType.VILLAGER, BUTTON_POS);
         ItemStack stack = new ItemStack(Items.DIAMOND_HELMET);
         final int headSlot = EquipmentSlot.HEAD.getOffsetEntitySlotId(100);
         StackReference stackReference = villager.getStackReference(headSlot);
@@ -48,6 +94,6 @@ public class ExecuteIfItemTests {
     }
 
     private static VillagerEntity createVillagerWithoutArmor(TestContext context) {
-        return context.spawnEntity(EntityType.VILLAGER, 0, 2, 0);
+        return context.spawnEntity(EntityType.VILLAGER, BUTTON_POS);
     }
 }
