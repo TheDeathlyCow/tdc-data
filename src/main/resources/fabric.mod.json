@@ -5,7 +5,8 @@
   "name": "Datapack Extensions",
   "description": "A server-side mod that extends the power of datapacks",
   "authors": [
-    "TheDeathlyCow"
+    "TheDeathlyCow",
+    "capitalistspz"
   ],
   "contact": {
     "homepage": "https://github.com/TheDeathlyCow/",
