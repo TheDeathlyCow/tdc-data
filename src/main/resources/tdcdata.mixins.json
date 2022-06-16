@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "command.ExecuteIfItemMixin",
+    "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomOperationMixin",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
