@@ -22,8 +22,14 @@ public class OperationTests {
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
+    @GameTest(structureName = "tdcdata-test:scoreboard.players.operation.logb.zero")
+    public void logBaseNegativeDoesNotChangeInput(TestContext context) {
+        context.pushButton(BUTTON_POS);
+        context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
+    }
+
     @GameTest(structureName = "tdcdata-test:scoreboard.players.operation.logb.negative")
-    public void logBaseWithNegativeInputDoesNotChangeInput(TestContext context) {
+    public void logBaseZeroDoesNotChangeInput(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }

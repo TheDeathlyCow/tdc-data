@@ -1,4 +1,3 @@
-scoreboard objectives add TestObjective dummy
 scoreboard objectives add TestConsts dummy
 
 scoreboard players set #0 TestConsts 0

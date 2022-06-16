@@ -2,10 +2,10 @@
 
 function tdcdata-test:scoreboard/operation/before_each
 
-scoreboard players set RShiftNegativePlayer TestObjective -100
+scoreboard players set RShiftNegativePlayer TestOperationObjective -100
 
-scoreboard players operation RShiftNegativePlayer TestObjective >>= #2 TestConsts
+scoreboard players operation RShiftNegativePlayer TestOperationObjective >>= #2 TestConsts
 
-execute if score RShiftNegativePlayer TestObjective matches -25 run setblock ~ ~1 ~ minecraft:lime_wool
+execute if score RShiftNegativePlayer TestOperationObjective matches -25 run setblock ~ ~1 ~ minecraft:lime_wool
 
 function tdcdata-test:scoreboard/operation/after_each
