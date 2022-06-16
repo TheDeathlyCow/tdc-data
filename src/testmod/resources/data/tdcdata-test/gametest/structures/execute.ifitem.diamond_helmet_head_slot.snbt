@@ -1,0 +1,13 @@
+{
+    DataVersion: 2975,
+    size: [1, 2, 1],
+    data: [
+        {pos: [0, 0, 0], state: "minecraft:command_block{conditional:false,facing:up}", nbt: {Command: "execute if tdcdata.item entity @e[type=villager,sort=nearest,limit=1] armor.head minecraft:diamond_helmet run setblock ~ ~1 ~ minecraft:lime_wool", CustomName: '{"text":"@"}', SuccessCount: 0, TrackOutput: 1b, UpdateLastExecution: 1b, auto: 0b, conditionMet: 0b, id: "minecraft:command_block", powered: 0b}},
+        {pos: [0, 1, 0], state: "minecraft:stone_button{face:floor,facing:east,powered:false}"}
+    ],
+    entities: [],
+    palette: [
+        "minecraft:stone_button{face:floor,facing:east,powered:false}",
+        "minecraft:command_block{conditional:false,facing:up}"
+    ]
+}
