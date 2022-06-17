@@ -19,10 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.thedeathlycow.tdcdata.DatapackUtils"
+      "com.github.thedeathlycow.tdcdata.DatapackExtensions"
     ],
     "client": [
-      "com.github.thedeathlycow.tdcdata.DatapackUtilsClient"
+      "com.github.thedeathlycow.tdcdata.DatapackExtensionsClient"
     ]
   },
   "mixins": [

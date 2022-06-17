@@ -6,6 +6,7 @@
   "mixins": [
     "command.ExecuteIfItemMixin",
     "command.ExecuteStoreAttributeCommandMixin",
+    "command.argument.CustomArgRegistrationMixin",
     "command.argument.CustomOperationMixin",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",

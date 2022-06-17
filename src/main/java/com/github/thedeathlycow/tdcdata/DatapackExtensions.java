@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class DatapackUtils implements ModInitializer {
+public class DatapackExtensions implements ModInitializer {
 
     public static final String MODID = "tdcdata";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
@@ -24,7 +24,6 @@ public class DatapackUtils implements ModInitializer {
                     ScoreboardCommandAdditions.register(dispatcher, registryAccess);
                 }
         );
-
-        LOGGER.info("Datapack Utilities initialized!");
+        LOGGER.info("Datapack Extensions initialized!");
     }
 }

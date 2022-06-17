@@ -1,6 +1,6 @@
 package com.github.thedeathlycow.tdcdata.client;
 
-import com.github.thedeathlycow.tdcdata.DatapackUtils;
+import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -26,7 +26,7 @@ public class UnobtainableItemGroup {
 
     public static ItemGroup create() {
         return FabricItemGroupBuilder.create(
-                        new Identifier(DatapackUtils.MODID, "unobtainable_group")
+                        new Identifier(DatapackExtensions.MODID, "unobtainable_group")
                 )
                 .icon(() -> new ItemStack(Items.BARRIER))
                 .appendItems(stacks -> {
