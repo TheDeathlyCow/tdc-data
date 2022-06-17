@@ -10,9 +10,9 @@ import net.minecraft.command.argument.ScoreboardObjectiveArgumentType;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.ScoreboardPlayerScore;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.Collection;
 
@@ -23,7 +23,7 @@ public class ScoreboardCommandAdditions {
 
     private static final String RANDOM_SUCCESS = "Generated %s";
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
 
         var randomOperation = literal("tdcdata.random")
                 .then(
@@ -78,7 +78,7 @@ public class ScoreboardCommandAdditions {
      */
     private static int executeRandomWithBound(ServerCommandSource source, int bound) {
         int result = source.getWorld().random.nextInt(bound);
-        source.sendFeedback(new LiteralText(String.format(RANDOM_SUCCESS, result)), true);
+        source.sendFeedback(Text.literal(String.format(RANDOM_SUCCESS, result)), true);
         return result;
     }
 
@@ -91,7 +91,7 @@ public class ScoreboardCommandAdditions {
      */
     private static int executeRandom(ServerCommandSource source) {
         int result = source.getWorld().random.nextInt();
-        source.sendFeedback(new LiteralText(String.format(RANDOM_SUCCESS, result)), true);
+        source.sendFeedback(Text.literal(String.format(RANDOM_SUCCESS, result)), true);
         return result;
     }
 
@@ -116,9 +116,9 @@ public class ScoreboardCommandAdditions {
         }
 
         if (targets.size() == 1) {
-            source.sendFeedback(new TranslatableText("commands.scoreboard.players.operation.success.single", objective.toHoverableText(), targets.iterator().next(), sum), true);
+            source.sendFeedback(Text.translatable("commands.scoreboard.players.operation.success.single", objective.toHoverableText(), targets.iterator().next(), sum), true);
         } else {
-            source.sendFeedback(new TranslatableText("commands.scoreboard.players.operation.success.multiple", objective.toHoverableText(), targets.size()), true);
+            source.sendFeedback(Text.translatable("commands.scoreboard.players.operation.success.multiple", objective.toHoverableText(), targets.size()), true);
         }
 
         return sum;

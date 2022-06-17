@@ -11,19 +11,19 @@ public class FunctionTests {
 
     //* Log tests
 
-    @GameTest(structureName = "tdcdata-test:scoreboard.players.function.ln.negative")
+    @GameTest(templateName = "tdcdata-test:scoreboard.players.function.ln.negative")
     public void lnNegativeDoesNotChangeInput(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:scoreboard.players.function.ln")
+    @GameTest(templateName = "tdcdata-test:scoreboard.players.function.ln")
     public void lnPositiveGeneratesCorrectAnswer(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:scoreboard.players.function.ln.zero")
+    @GameTest(templateName = "tdcdata-test:scoreboard.players.function.ln.zero")
     public void lnZeroDoesNotChangeInput(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
@@ -31,19 +31,19 @@ public class FunctionTests {
 
     //* Square Root Tests
 
-    @GameTest(structureName = "tdcdata-test:scoreboard.players.function.sqrt.negative")
+    @GameTest(templateName = "tdcdata-test:scoreboard.players.function.sqrt.negative")
     public void sqrtNegativeDoesNotChangeInput(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:scoreboard.players.function.sqrt")
+    @GameTest(templateName = "tdcdata-test:scoreboard.players.function.sqrt")
     public void sqrtPositiveGeneratesCorrectAnswer(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:scoreboard.players.function.sqrt.zero")
+    @GameTest(templateName = "tdcdata-test:scoreboard.players.function.sqrt.zero")
     public void sqrtZeroDoesNotChangeInput(TestContext context) {
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);

@@ -7,11 +7,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.argument.TeamArgumentType;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.TeamCommand;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -21,9 +19,9 @@ public class TeamModifyCommandAdditions {
     private static final String KEEPINV_SUCCESS = "Set Keep Inventory for team [%s] to %s";
     private static final String KEEPINV_UNCHANGED = "Nothing changed. Keep Inventory already has that value";
 
-    private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new SimpleCommandExceptionType(new LiteralText(KEEPINV_UNCHANGED));
+    private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new SimpleCommandExceptionType(Text.literal(KEEPINV_UNCHANGED));
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
         var keepInventoryRule = argument("team", TeamArgumentType.team())
                 .then(
                         literal("tdcdata.keepInventory")
@@ -59,7 +57,7 @@ public class TeamModifyCommandAdditions {
      * @param value  The value to set for keep inventory
      * @return Returns a result 0
      * @throws CommandSyntaxException Thrown if the current value of keep inventory
-     * is already equal to the given value.
+     *                                is already equal to the given value.
      */
     private static int keepInventory(ServerCommandSource source, Team team, boolean value) throws CommandSyntaxException {
 
@@ -69,7 +67,7 @@ public class TeamModifyCommandAdditions {
             throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create();
         } else {
             ruledTeam.tdcdata$setKeepInventory(value);
-            Text msg = new LiteralText(String.format(KEEPINV_SUCCESS, team.getDisplayName().asString(), value));
+            Text msg = Text.literal(String.format(KEEPINV_SUCCESS, team.getDisplayName().getString(), value));
             source.sendFeedback(msg, true);
         }
 

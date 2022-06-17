@@ -4,6 +4,7 @@ import com.github.thedeathlycow.tdcdata.server.command.ExecuteIfItemCommand;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -40,15 +41,15 @@ public abstract class ExecuteIfItemMixin {
                     value = "TAIL"
             )
     )
-    private static void addItemCondition(CommandNode<ServerCommandSource> root, LiteralArgumentBuilder<ServerCommandSource> argumentBuilder, boolean positive, CallbackInfoReturnable<ArgumentBuilder<ServerCommandSource, ?>> cir) {
+    private static void addItemCondition(CommandNode<ServerCommandSource> root, LiteralArgumentBuilder<ServerCommandSource> argumentBuilder, boolean positive, CommandRegistryAccess registryAccess, CallbackInfoReturnable<ArgumentBuilder<ServerCommandSource, ?>> cir) {
 
         var entityItemCondition = literal("entity").then(
                 argument("target", EntityArgumentType.entity()).then(
                         argument("slot", ItemSlotArgumentType.itemSlot()).then(
-                                invokeAddConditonLogic(root, argument("itemPredicate", ItemPredicateArgumentType.itemPredicate()), positive, (context) -> {
+                                invokeAddConditonLogic(root, argument("itemPredicate", ItemPredicateArgumentType.itemPredicate(registryAccess)), positive, (context) -> {
                                     Entity entity = EntityArgumentType.getEntity(context, "target");
                                     int slot = ItemSlotArgumentType.getItemSlot(context, "slot");
-                                    Predicate<ItemStack> itemPredicate = ItemPredicateArgumentType.getItemPredicate(context, "itemPredicate");
+                                    Predicate<ItemStack> itemPredicate = ItemPredicateArgumentType.getItemStackPredicate(context, "itemPredicate");
                                     return ExecuteIfItemCommand.testEntityItemCondition(context.getSource(), entity, slot, itemPredicate);
                                 })
                         )
@@ -58,10 +59,10 @@ public abstract class ExecuteIfItemMixin {
         var blockItemCondition = literal("block").then(
                 argument("pos", BlockPosArgumentType.blockPos()).then(
                         argument("slot", ItemSlotArgumentType.itemSlot()).then(
-                                invokeAddConditonLogic(root, argument("itemPredicate", ItemPredicateArgumentType.itemPredicate()), positive, (context) -> {
+                                invokeAddConditonLogic(root, argument("itemPredicate", ItemPredicateArgumentType.itemPredicate(registryAccess)), positive, (context) -> {
                                     BlockPos pos = BlockPosArgumentType.getBlockPos(context, "pos");
                                     int slot = ItemSlotArgumentType.getItemSlot(context, "slot");
-                                    Predicate<ItemStack> itemPredicate = ItemPredicateArgumentType.getItemPredicate(context, "itemPredicate");
+                                    Predicate<ItemStack> itemPredicate = ItemPredicateArgumentType.getItemStackPredicate(context, "itemPredicate");
                                     return ExecuteIfItemCommand.testBlockItemCondition(context.getSource(), pos, slot, itemPredicate);
                                 })
                         )

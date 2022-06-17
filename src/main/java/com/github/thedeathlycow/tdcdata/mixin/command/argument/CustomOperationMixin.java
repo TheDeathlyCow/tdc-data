@@ -3,7 +3,7 @@ package com.github.thedeathlycow.tdcdata.mixin.command.argument;
 import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.argument.OperationArgumentType;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 @Mixin(OperationArgumentType.class)
 public class CustomOperationMixin {
 
-    private static final SimpleCommandExceptionType tdcdata$NON_POSITIVE_INPUT = new SimpleCommandExceptionType(new LiteralText("Input score must be positive!"));
+    private static final SimpleCommandExceptionType tdcdata$NON_POSITIVE_INPUT = new SimpleCommandExceptionType(Text.literal("Input score must be positive!"));
 
     @ModifyArg(
             method = "listSuggestions",

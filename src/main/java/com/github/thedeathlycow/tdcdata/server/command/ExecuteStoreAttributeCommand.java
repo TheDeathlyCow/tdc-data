@@ -6,7 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.function.BinaryOperator;
 
@@ -23,11 +23,11 @@ public class ExecuteStoreAttributeCommand {
                 if (inst != null) {
                     inst.setBaseValue(value);
                 } else {
-                    source.sendError(new TranslatableText("commands.attribute.failed.no_attribute", livingEntity.getName(), new TranslatableText(attribute.getTranslationKey())));
+                    source.sendError(Text.translatable("commands.attribute.failed.no_attribute", livingEntity.getName(), Text.translatable(attribute.getTranslationKey())));
                 }
             }
             else {
-                source.sendError(new TranslatableText("commands.attribute.failed.entity", target.getName()));
+                source.sendError(Text.translatable("commands.attribute.failed.entity", target.getName()));
             }
         }, BINARY_RESULT_CONSUMER);
     }

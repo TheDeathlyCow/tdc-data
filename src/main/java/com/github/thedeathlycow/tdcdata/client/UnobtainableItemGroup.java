@@ -13,7 +13,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 public class UnobtainableItemGroup {
 
-    private static final Text STRUCTURE_DATA_BLOCK_NAME = new TranslatableText("block.tdcdata.command_block.data")
+    private static final Text STRUCTURE_DATA_BLOCK_NAME = Text.translatable("block.tdcdata.command_block.data")
             .setStyle(Style.EMPTY.withItalic(false));
 
     public static ItemGroup create() {

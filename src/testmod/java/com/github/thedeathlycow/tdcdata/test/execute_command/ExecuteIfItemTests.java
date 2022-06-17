@@ -26,28 +26,28 @@ public class ExecuteIfItemTests {
 
     //* IF tests
 
-    @GameTest(structureName = "tdcdata-test:execute.if.item.test_head_slot")
+    @GameTest(templateName = "tdcdata-test:execute.if.item.test_head_slot")
     public void itemInHeadSlotPassesIfCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithArmor(context);
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.if.item.test_head_slot")
+    @GameTest(templateName = "tdcdata-test:execute.if.item.test_head_slot")
     public void noItemInHeadSlotFailsIfCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithoutArmor(context);
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.if.item.test_villager0_slot")
+    @GameTest(templateName = "tdcdata-test:execute.if.item.test_villager0_slot")
     public void itemInHeadFailsVillager0IfCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithArmor(context);
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.if.item.test_villager0_slot")
+    @GameTest(templateName = "tdcdata-test:execute.if.item.test_villager0_slot")
     public void noItemInHeadFailsVillager0IfCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithoutArmor(context);
         context.pushButton(BUTTON_POS);
@@ -56,28 +56,28 @@ public class ExecuteIfItemTests {
 
     //* UNLESS tests
 
-    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_head_slot")
+    @GameTest(templateName = "tdcdata-test:execute.unless.item.test_head_slot")
     public void itemInHeadSlotFailsUnlessCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithArmor(context);
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.STONE_BUTTON, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_head_slot")
+    @GameTest(templateName = "tdcdata-test:execute.unless.item.test_head_slot")
     public void noItemInHeadSlotPassesUnlessCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithoutArmor(context);
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_villager0_slot")
+    @GameTest(templateName = "tdcdata-test:execute.unless.item.test_villager0_slot")
     public void itemInHeadPassesVillager0UnlessCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithArmor(context);
         context.pushButton(BUTTON_POS);
         context.expectBlockAtEnd(Blocks.LIME_WOOL, BUTTON_POS);
     }
 
-    @GameTest(structureName = "tdcdata-test:execute.unless.item.test_villager0_slot")
+    @GameTest(templateName = "tdcdata-test:execute.unless.item.test_villager0_slot")
     public void noItemInHeadPassesVillager0UnlessCheck(TestContext context) {
         VillagerEntity villager = createVillagerWithoutArmor(context);
         context.pushButton(BUTTON_POS);

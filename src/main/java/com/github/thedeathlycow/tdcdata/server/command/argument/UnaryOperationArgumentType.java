@@ -10,8 +10,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,9 +26,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class UnaryOperationArgumentType implements ArgumentType<UnaryOperation> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("~", "!", "ln", "sqrt", "rand");
-    private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(new TranslatableText("arguments.operation.invalid"));
-    public static final SimpleCommandExceptionType OUT_OF_DOMAIN = new SimpleCommandExceptionType(new LiteralText("Input score is out of the domain for this function!"));
-    public static final SimpleCommandExceptionType INVALID_BASE = new SimpleCommandExceptionType(new LiteralText("Base score must be greater than one!"));
+    private static final SimpleCommandExceptionType INVALID_OPERATION = new SimpleCommandExceptionType(Text.translatable("arguments.operation.invalid"));
+    public static final SimpleCommandExceptionType OUT_OF_DOMAIN = new SimpleCommandExceptionType(Text.literal("Input score is out of the domain for this function!"));
+    public static final SimpleCommandExceptionType INVALID_BASE = new SimpleCommandExceptionType(Text.literal("Base score must be greater than one!"));
     private static final double NATURAL_LOG_OF_2 = Math.log(2);
 
     public static UnaryOperationArgumentType unaryOperation() {
