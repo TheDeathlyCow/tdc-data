@@ -7,6 +7,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
+import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
@@ -22,9 +23,9 @@ public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibratio
     protected TriggerVibrationCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer predicateDeserializer) {
 
         GameEventPredicate eventPredicate = GameEventPredicate.fromJson(json);
-        Integer frequency = null;
+        NumberRange.IntRange frequency = null;
         if (json.has("frequency")) {
-            frequency = json.get("frequency").getAsInt();
+            frequency = NumberRange.IntRange.fromJson(json.get("frequency"));
         }
 
         return new Conditions(player, eventPredicate, frequency);
@@ -46,30 +47,31 @@ public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibratio
         @Nullable
         private final GameEventPredicate eventPredicate;
         @Nullable
-        private final Integer frequency;
+        private final NumberRange.IntRange frequencyRange;
 
-        public Conditions(EntityPredicate.Extended player, GameEventPredicate eventPredicate, Integer frequency) {
+        public Conditions(EntityPredicate.Extended player, GameEventPredicate eventPredicate, NumberRange.IntRange frequencyRange) {
             super(TriggerVibrationCriterion.ID, player);
             this.eventPredicate = eventPredicate;
-            this.frequency = frequency;
+            this.frequencyRange = frequencyRange;
         }
 
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject json = super.toJson(predicateSerializer);
             JsonElement eventJson = this.eventPredicate != null ? this.eventPredicate.toJson() : JsonNull.INSTANCE;
             json.add("event", eventJson);
-            json.addProperty("frequency", this.frequency);
+            JsonElement frequencyJson = this.frequencyRange != null ? this.frequencyRange.toJson() : JsonNull.INSTANCE;
+            json.add("frequency", frequencyJson);
             return json;
         }
 
-        public boolean matches(GameEvent event, Integer frequency) {
-            if (this.eventPredicate == null && this.frequency == null) {
+        public boolean matches(GameEvent event, int frequency) {
+            if (this.eventPredicate == null && this.frequencyRange == null) {
                 return true;
             }
             if (this.eventPredicate != null && !this.eventPredicate.test(event)) {
                 return false;
             } else {
-                return this.frequency != null && this.frequency.equals(frequency);
+                return this.frequencyRange != null && this.frequencyRange.test(frequency);
             }
         }
     }
