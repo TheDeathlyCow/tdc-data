@@ -8,6 +8,7 @@
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomArgRegistrationMixin",
     "command.argument.CustomOperationMixin",
+    "advancement_triggers.TriggerVibrationCriterionMixin",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
     "scoreboard.teamrules.SerializeRulesMixin",

@@ -1,6 +1,11 @@
 package com.github.thedeathlycow.tdcdata;
 
 import com.github.thedeathlycow.tdcdata.server.command.*;
+import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
+import com.github.thedeathlycow.tdcdata.server.command.FreezeCommand;
+import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
+import com.github.thedeathlycow.tdcdata.server.command.TeamModifyCommandAdditions;
+import com.github.thedeathlycow.tdcdata.server.command.TimeCommandAdditions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
@@ -24,6 +29,7 @@ public class DatapackExtensions implements ModInitializer {
                     TimeCommandAdditions.register(dispatcher, registryAccess);
                 }
         );
+        TdcDataAdvancementTriggers.registerTriggers();
         LOGGER.info("Datapack Extensions initialized!");
     }
 }
