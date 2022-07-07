@@ -7,21 +7,21 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
+import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
-import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibrationCriterion.Conditions> {
-    private static final Identifier ID = new Identifier(DatapackExtensions.MODID, "trigger_vibration");
+public class PlayerTriggerGameEventCriterion extends AbstractCriterion<PlayerTriggerGameEventCriterion.Conditions> {
+    private static final Identifier ID = new Identifier(DatapackExtensions.MODID, "player_trigger_game_event");
 
     @Override
-    protected TriggerVibrationCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+    protected PlayerTriggerGameEventCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer predicateDeserializer) {
 
         GameEventPredicate eventPredicate = GameEventPredicate.fromJson(json.get("event"));
         NumberRange.IntRange frequency = null;
@@ -51,7 +51,7 @@ public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibratio
         private final NumberRange.IntRange frequencyRange;
 
         public Conditions(EntityPredicate.Extended player, GameEventPredicate eventPredicate, NumberRange.IntRange frequencyRange) {
-            super(TriggerVibrationCriterion.ID, player);
+            super(PlayerTriggerGameEventCriterion.ID, player);
             this.eventPredicate = eventPredicate;
             this.frequencyRange = frequencyRange;
         }
@@ -70,8 +70,10 @@ public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibratio
                 return true;
             } else if (this.eventPredicate != null && !this.eventPredicate.test(event)) {
                 return false;
-            } else if (this.frequencyRange != null && !this.frequencyRange.test(frequency)) {
-                return false;
+            } else if (this.frequencyRange != null) {
+                if (SculkSensorBlock.FREQUENCIES.containsKey(event)) {
+                    return this.frequencyRange.test(frequency);
+                }
             }
             return true;
         }
