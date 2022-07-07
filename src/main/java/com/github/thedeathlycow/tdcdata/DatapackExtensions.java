@@ -1,5 +1,6 @@
 package com.github.thedeathlycow.tdcdata;
 
+import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import com.github.thedeathlycow.tdcdata.server.command.FreezeCommand;
 import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
 import com.github.thedeathlycow.tdcdata.server.command.TeamModifyCommandAdditions;
@@ -26,6 +27,7 @@ public class DatapackExtensions implements ModInitializer {
                     TimeCommandAdditions.register(dispatcher, registryAccess);
                 }
         );
+        TdcDataAdvancementTriggers.registerTriggers();
         LOGGER.info("Datapack Extensions initialized!");
     }
 }
