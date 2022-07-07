@@ -1,11 +1,10 @@
 package com.github.thedeathlycow.tdcdata.predicate;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.*;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -50,16 +49,21 @@ public class GameEventPredicate {
         TagKey<GameEvent> tag = null;
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         if (jsonObject.has("events")) {
-            events = new LinkedHashSet<>();
+            ImmutableSet.Builder<GameEvent> builder = ImmutableSet.builder();
             JsonArray array = jsonObject.getAsJsonArray("events");
             for (JsonElement elem : array) {
-                GameEvent event = Registry.GAME_EVENT.get(new Identifier(elem.getAsString()));
-                events.add(event);
+                Identifier id = new Identifier(elem.getAsString());
+                GameEvent event = Registry.GAME_EVENT.getOrEmpty(id).orElseThrow(() -> {
+                    return new JsonSyntaxException("Unknown game event id '" + id + "'");
+                });
+                builder.add(event);
             }
+            events = builder.build();
         }
 
         if (jsonObject.has("tag")) {
-            tag = TagKey.of(Registry.GAME_EVENT_KEY, new Identifier(jsonObject.get("tag").getAsString()));
+            Identifier id = new Identifier(JsonHelper.getString(jsonObject, "tag"));
+            tag = TagKey.of(Registry.GAME_EVENT_KEY, id);
         }
 
         return new GameEventPredicate(events, tag);

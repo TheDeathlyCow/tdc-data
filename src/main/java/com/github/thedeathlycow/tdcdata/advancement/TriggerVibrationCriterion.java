@@ -11,6 +11,7 @@ import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.event.GameEvent;
@@ -22,7 +23,7 @@ public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibratio
     @Override
     protected TriggerVibrationCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer predicateDeserializer) {
 
-        GameEventPredicate eventPredicate = GameEventPredicate.fromJson(json);
+        GameEventPredicate eventPredicate = GameEventPredicate.fromJson(json.get("event"));
         NumberRange.IntRange frequency = null;
         if (json.has("frequency")) {
             frequency = NumberRange.IntRange.fromJson(json.get("frequency"));
@@ -67,12 +68,12 @@ public class TriggerVibrationCriterion extends AbstractCriterion<TriggerVibratio
         public boolean matches(GameEvent event, int frequency) {
             if (this.eventPredicate == null && this.frequencyRange == null) {
                 return true;
-            }
-            if (this.eventPredicate != null && !this.eventPredicate.test(event)) {
+            } else if (this.eventPredicate != null && !this.eventPredicate.test(event)) {
                 return false;
-            } else {
-                return this.frequencyRange != null && this.frequencyRange.test(frequency);
+            } else if (this.frequencyRange != null && !this.frequencyRange.test(frequency)) {
+                return false;
             }
+            return true;
         }
     }
 }

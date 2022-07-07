@@ -1,8 +1,10 @@
 package com.github.thedeathlycow.tdcdata.mixin.advancement_triggers;
 
+import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
