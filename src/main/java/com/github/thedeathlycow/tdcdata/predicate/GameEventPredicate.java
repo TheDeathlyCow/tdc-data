@@ -34,10 +34,10 @@ public class GameEventPredicate {
     public boolean test(GameEvent event) {
         if (this == ANY) {
             return true;
-        } else if (this.events != null && this.events.contains(event)) {
-            return true;
+        } else if (this.events != null && !this.events.contains(event)) {
+            return false;
         } else {
-            return this.tag != null && event.isIn(this.tag);
+            return this.tag == null || event.isIn(this.tag);
         }
     }
 
