@@ -223,7 +223,7 @@ public class HealthCommand {
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
             String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
-            int health = Math.round(((LivingEntity) target).getMaxHealth());
+            int health = Math.round(((LivingEntity) target).getHealth());
             msg = Text.literal(String.format(format, MathHelper.abs(amount), target.getDisplayName().getString(), health));
         } else {
             String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
