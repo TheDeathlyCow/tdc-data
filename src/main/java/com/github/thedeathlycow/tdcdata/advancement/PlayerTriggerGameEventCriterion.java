@@ -7,8 +7,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.block.SculkSensorBlock;
-import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
@@ -24,17 +22,12 @@ public class PlayerTriggerGameEventCriterion extends AbstractCriterion<PlayerTri
     protected PlayerTriggerGameEventCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer predicateDeserializer) {
 
         GameEventPredicate eventPredicate = GameEventPredicate.fromJson(json.get("event"));
-        NumberRange.IntRange frequency = null;
-        if (json.has("frequency")) {
-            frequency = NumberRange.IntRange.fromJson(json.get("frequency"));
-        }
-
-        return new Conditions(player, eventPredicate, frequency);
+        return new Conditions(player, eventPredicate);
     }
 
-    public void trigger(ServerPlayerEntity player, GameEvent event, Integer frequency) {
+    public void trigger(ServerPlayerEntity player, GameEvent event) {
         super.trigger(player, (conditions) -> {
-            return conditions.matches(event, frequency);
+            return conditions.matches(event);
         });
     }
 
@@ -47,35 +40,25 @@ public class PlayerTriggerGameEventCriterion extends AbstractCriterion<PlayerTri
 
         @Nullable
         private final GameEventPredicate eventPredicate;
-        @Nullable
-        private final NumberRange.IntRange frequencyRange;
 
-        public Conditions(EntityPredicate.Extended player, GameEventPredicate eventPredicate, NumberRange.IntRange frequencyRange) {
+        public Conditions(EntityPredicate.Extended player, GameEventPredicate eventPredicate) {
             super(PlayerTriggerGameEventCriterion.ID, player);
             this.eventPredicate = eventPredicate;
-            this.frequencyRange = frequencyRange;
         }
 
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject json = super.toJson(predicateSerializer);
             JsonElement eventJson = this.eventPredicate != null ? this.eventPredicate.toJson() : JsonNull.INSTANCE;
-            json.add("event", eventJson);
-            JsonElement frequencyJson = this.frequencyRange != null ? this.frequencyRange.toJson() : JsonNull.INSTANCE;
-            json.add("frequency", frequencyJson);
+            json.add("event", eventJson);;
             return json;
         }
 
-        public boolean matches(GameEvent event, int frequency) {
-            if (this.eventPredicate == null && this.frequencyRange == null) {
+        public boolean matches(GameEvent event) {
+            if (this.eventPredicate == null || this.eventPredicate == GameEventPredicate.ANY) {
                 return true;
-            } else if (this.eventPredicate != null && !this.eventPredicate.test(event)) {
-                return false;
-            } else if (this.frequencyRange != null) {
-                if (SculkSensorBlock.FREQUENCIES.containsKey(event)) {
-                    return this.frequencyRange.test(frequency);
-                }
+            } else {
+                return this.eventPredicate.test(event);
             }
-            return true;
         }
     }
 }

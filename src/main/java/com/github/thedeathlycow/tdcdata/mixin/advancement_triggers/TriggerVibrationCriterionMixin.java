@@ -1,10 +1,8 @@
 package com.github.thedeathlycow.tdcdata.mixin.advancement_triggers;
 
-import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -28,7 +26,7 @@ public class TriggerVibrationCriterionMixin {
             if (SculkSensorBlock.FREQUENCIES.containsKey(event)) {
                 frequency = SculkSensorBlock.FREQUENCIES.getInt(event);
             }
-            TdcDataAdvancementTriggers.TRIGGER_VIBRATION.trigger(serverPlayer, event, frequency);
+            TdcDataAdvancementTriggers.TRIGGER_VIBRATION.trigger(serverPlayer, event);
         }
     }
 
