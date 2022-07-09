@@ -187,7 +187,7 @@ public class HealthCommand {
             return sum;
         }
         else {
-            Text msg = Text.literal(targets.size() == 1 ? SET_FAIL_SINGLE : SET_FAIL_MULTIPLE);
+            Text msg = Text.literal(targets.size() == 1 ? String.format(SET_FAIL_SINGLE, targets.iterator().next().getDisplayName().getString()) : SET_FAIL_MULTIPLE);
             source.sendError(msg);
             return 0;
         }
@@ -239,9 +239,9 @@ public class HealthCommand {
         }
         else {
             Text msg = Text.literal(targets.size() == 1
-                    ? (isRemoving
+                    ? String.format(isRemoving
                         ? REMOVE_FAIL_SINGLE
-                        : ADD_FAIL_SINGLE)
+                        : ADD_FAIL_SINGLE, targets.iterator().next().getDisplayName().getString())
                     : (isRemoving
                         ? REMOVE_FAIL_MULTIPLE
                         : ADD_FAIL_MULTIPLE)
