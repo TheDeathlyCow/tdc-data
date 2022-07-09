@@ -23,16 +23,10 @@ public class HealthCommand {
 
     private static final String ADD_SUCCESS_SINGLE = "Added %d health to %s (now %d)";
     private static final String ADD_FAIL_SINGLE = "%s is not living";
-    private static final String ADD_SUCCESS_MULTIPLE = "Added %d health to %d targets";
-    private static final String ADD_FAIL_MULTIPLE = "A selected entity was not living";
     private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from %s (now %d)";
     private static final String REMOVE_FAIL_SINGLE = "%s is not living";
-    private static final String REMOVE_SUCCESS_MULTIPLE = "Removed %d health from %d targets";
-    private static final String REMOVE_FAIL_MULTIPLE = "A selected entity was not living";
     private static final String SET_SUCCESS_SINGLE = "Set the health of %s to %d";
     private static final String SET_FAIL_SINGLE = "%s is not living";
-    private static final String SET_SUCCESS_MULTIPLE = "Set the health of %d targets to %d";
-    private static final String SET_FAIL_MULTIPLE = "A selected entity was not living";
     private static final String GET_CURRENT_SUCCESS = "%s has %d health";
     private static final String GET_CURRENT_FAIL = "%s is not living";
     private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d health";
@@ -61,13 +55,13 @@ public class HealthCommand {
 
         var removeSubCommand = literal("remove")
                 .then(
-                        argument("targets", EntityArgumentType.entities())
+                        argument("target", EntityArgumentType.entity())
                                 .then(
                                         argument("amount", IntegerArgumentType.integer(0))
                                                 .executes(context -> {
                                                     return adjust(
                                                             context.getSource(),
-                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                            EntityArgumentType.getEntity(context, "target"),
                                                             -IntegerArgumentType.getInteger(context, "amount"),
                                                             true,
                                                             true
@@ -78,7 +72,7 @@ public class HealthCommand {
                                                                 .executes(context -> {
                                                                     return adjust(
                                                                             context.getSource(),
-                                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                                            EntityArgumentType.getEntity(context, "target"),
                                                                             -IntegerArgumentType.getInteger(context, "amount"),
                                                                             BoolArgumentType.getBool(context, "clamp"),
                                                                             true
@@ -90,13 +84,13 @@ public class HealthCommand {
 
         var addSubCommand = literal("add")
                 .then(
-                        argument("targets", EntityArgumentType.entities())
+                        argument("target", EntityArgumentType.entity())
                                 .then(
                                         argument("amount", IntegerArgumentType.integer(0))
                                                 .executes(context -> {
                                                     return adjust(
                                                             context.getSource(),
-                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                            EntityArgumentType.getEntity(context, "target"),
                                                             IntegerArgumentType.getInteger(context, "amount"),
                                                             true,
                                                             false
@@ -107,7 +101,7 @@ public class HealthCommand {
                                                                 .executes(context -> {
                                                                     return adjust(
                                                                             context.getSource(),
-                                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                                            EntityArgumentType.getEntity(context, "target"),
                                                                             IntegerArgumentType.getInteger(context, "amount"),
                                                                             BoolArgumentType.getBool(context, "clamp"),
                                                                             false
@@ -119,12 +113,12 @@ public class HealthCommand {
 
         var setSubCommand = literal("set")
                 .then(
-                        argument("targets", EntityArgumentType.entities())
+                        argument("target", EntityArgumentType.entity())
                                 .then(
                                         argument("amount", IntegerArgumentType.integer(0))
                                                 .executes(context -> {
                                                     return set(context.getSource(),
-                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                            EntityArgumentType.getEntity(context, "target"),
                                                             IntegerArgumentType.getInteger(context, "amount"),
                                                             true);
                                                 })
@@ -133,7 +127,7 @@ public class HealthCommand {
                                                                 .executes(context -> {
                                                                     return set(
                                                                             context.getSource(),
-                                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                                            EntityArgumentType.getEntity(context, "target"),
                                                                             IntegerArgumentType.getInteger(context, "amount"),
                                                                             BoolArgumentType.getBool(context, "clamp")
                                                                     );
@@ -159,38 +153,25 @@ public class HealthCommand {
      * affected by this command.
      *
      * @param source      The source of the command
-     * @param targets     The collection of {@link Entity}s affected by this command
+     * @param target      The {@link Entity} affected by this command
      * @param amount      The of health to set on each target.
      * @param shouldClamp Whether the amount should be clamped
      * @return Returns the sum of the healths of each target after execution
      */
-    private static int set(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp) {
-        if (allLiving(targets)) {
-            int sum = 0;
-            for (Entity target : targets) {
-                LivingEntity livingTarget = (LivingEntity) target;
-
-                int toSet = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
-                livingTarget.setHealth(toSet);
-                sum += toSet;
-            }
-
-            Text msg;
-            if (targets.size() == 1) {
-                Entity target = targets.iterator().next();
-                msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
-            } else {
-                msg = Text.literal(String.format(SET_SUCCESS_MULTIPLE, targets.size(), amount));
-            }
-            source.sendFeedback(msg, true);
-
-            return sum;
-        }
-        else {
-            Text msg = Text.literal(targets.size() == 1 ? String.format(SET_FAIL_SINGLE, targets.iterator().next().getDisplayName().getString()) : SET_FAIL_MULTIPLE);
+    private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) {
+        if (!(target instanceof LivingEntity livingTarget)) {
+            Text msg = Text.literal(String.format(SET_FAIL_SINGLE, target.getDisplayName().getString()));
             source.sendError(msg);
             return 0;
         }
+
+        int newHealth = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
+
+        livingTarget.setHealth(newHealth);
+
+        Text msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
+        source.sendFeedback(msg, true);
+        return newHealth;
     }
 
     /**
@@ -201,54 +182,30 @@ public class HealthCommand {
      * Returns and displays in chat the number of entities affected by this command.
      *
      * @param source      The source of the command
-     * @param targets     The targeted {@link LivingEntity}s to adjust the health of.
+     * @param target      The targeted {@link LivingEntity} to adjust the health of.
      * @param amount      The amount to adjust by
      * @param shouldClamp Whether to clamp the final amount. Defaults to true.
      * @param isRemoving  Whether this command is removing or adding.
      * @return Returns the sum of the healths of each target after execution
      */
-    private static int adjust(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp, final boolean isRemoving) {
-        if (allLiving(targets)) {
-            int sum = 0;
-
-            for (Entity target : targets) {
-                LivingEntity livingTarget = (LivingEntity) target;
-
-                int adjustedAmount = MathHelper.floor(livingTarget.getHealth() + amount);
-                if (shouldClamp) {
-                    adjustedAmount = MathHelper.clamp(adjustedAmount, 0, MathHelper.floor(livingTarget.getMaxHealth()));
-                }
-                livingTarget.setHealth(adjustedAmount);
-                sum += adjustedAmount;
-            }
-
-
-            Text msg;
-            if (targets.size() == 1) {
-                Entity target = targets.iterator().next();
-                String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
-                int health = MathHelper.floor(((LivingEntity) target).getHealth());
-                msg = Text.literal(String.format(format, MathHelper.abs(amount), target.getDisplayName().getString(), health));
-            } else {
-                String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
-                msg = Text.literal(String.format(format, MathHelper.abs(amount), targets.size()));
-            }
-            source.sendFeedback(msg, true);
-
-            return sum;
-        }
-        else {
-            Text msg = Text.literal(targets.size() == 1
-                    ? String.format(isRemoving
-                        ? REMOVE_FAIL_SINGLE
-                        : ADD_FAIL_SINGLE, targets.iterator().next().getDisplayName().getString())
-                    : (isRemoving
-                        ? REMOVE_FAIL_MULTIPLE
-                        : ADD_FAIL_MULTIPLE)
-            );
+    private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) {
+        if (!(target instanceof LivingEntity livingTarget)) {
+            Text msg = Text.literal(String.format(isRemoving ? REMOVE_FAIL_SINGLE : ADD_FAIL_SINGLE, target.getDisplayName().getString()));
             source.sendError(msg);
             return 0;
         }
+
+        int newHealth = MathHelper.floor(livingTarget.getHealth() + amount);
+        if (shouldClamp) {
+            newHealth = MathHelper.clamp(newHealth, 0, MathHelper.floor(livingTarget.getMaxHealth()));
+        }
+
+        livingTarget.setHealth(newHealth);
+
+        // NOTE: The reason that we run livingTarget.getHealth() is because the setHealth() method may have modified the value we passed in.
+        Text msg = Text.literal(String.format(isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE, amount, target.getDisplayName().getString(), livingTarget.getHealth()));
+        source.sendFeedback(msg, true);
+        return newHealth;
     }
 
     /**
@@ -260,13 +217,13 @@ public class HealthCommand {
      * @return Returns the amount of health the target has.
      */
     private static int getCurrent(final ServerCommandSource source, final Entity target) {
-        if (!(target instanceof LivingEntity)) {
+        if (!(target instanceof LivingEntity livingTarget)) {
             Text msg = Text.literal(String.format(GET_CURRENT_FAIL, target.getDisplayName().getString()));
             source.sendError(msg);
-            return -1;
+            return 0;
         }
 
-        int amount = MathHelper.floor(((LivingEntity) target).getHealth());
+        int amount = MathHelper.floor(livingTarget.getHealth());
 
         Text msg = Text.literal(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
@@ -283,25 +240,16 @@ public class HealthCommand {
      * @return Returns the amount of maximum health the target can have.
      */
     private static int getMax(final ServerCommandSource source, final Entity target) {
-        if (!(target instanceof LivingEntity)) {
+        if (!(target instanceof LivingEntity livingTarget)) {
             Text msg = Text.literal(String.format(GET_MAX_FAIL, target.getDisplayName().getString()));
             source.sendError(msg);
-            return -1;
+            return 0;
         }
 
-        int amount = MathHelper.floor(((LivingEntity) target).getMaxHealth());
+        int amount = MathHelper.floor(livingTarget.getMaxHealth());
 
         Text msg = Text.literal(String.format(GET_MAX_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
-    }
-
-    private static boolean allLiving(Collection<? extends Entity> entities) {
-        for (Object obj : entities) {
-            if (!(obj instanceof LivingEntity)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
