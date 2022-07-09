@@ -24,12 +24,15 @@ public class HealthCommand {
     private static final String ADD_SUCCESS_SINGLE = "Added %d health to %s (now %d)";
     private static final String ADD_FAIL_SINGLE = "%s is not living";
     private static final String ADD_SUCCESS_MULTIPLE = "Added %d health to %d targets";
+    private static final String ADD_FAIL_MULTIPLE = "A selected entity was not living";
     private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from %s (now %d)";
     private static final String REMOVE_FAIL_SINGLE = "%s is not living";
     private static final String REMOVE_SUCCESS_MULTIPLE = "Removed %d health from %d targets";
+    private static final String REMOVE_FAIL_MULTIPLE = "A selected entity was not living";
     private static final String SET_SUCCESS_SINGLE = "Set the health of %s to %d";
     private static final String SET_FAIL_SINGLE = "%s is not living";
     private static final String SET_SUCCESS_MULTIPLE = "Set the health of %d targets to %d";
+    private static final String SET_FAIL_MULTIPLE = "A selected entity was not living";
     private static final String GET_CURRENT_SUCCESS = "%s has %d health";
     private static final String GET_CURRENT_FAIL = "%s is not living";
     private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d health";
@@ -162,29 +165,32 @@ public class HealthCommand {
      * @return Returns the sum of the healths of each target after execution
      */
     private static int set(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp) {
-        int sum = 0;
-        for (Entity target : targets) {
-            if (!(target instanceof LivingEntity livingTarget)) {
-                Text msg = Text.literal(String.format(SET_FAIL_SINGLE, target.getDisplayName().getString()));
-                source.sendError(msg);
-                return sum;
+        if (allLiving(targets)) {
+            int sum = 0;
+            for (Entity target : targets) {
+                LivingEntity livingTarget = (LivingEntity) target;
+
+                int toSet = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
+                livingTarget.setHealth(toSet);
+                sum += toSet;
             }
 
-            int toSet = shouldClamp ? MathHelper.clamp(amount, 0, Math.round(livingTarget.getMaxHealth())) : amount;
-            livingTarget.setHealth(toSet);
-            sum += toSet;
-        }
+            Text msg;
+            if (targets.size() == 1) {
+                Entity target = targets.iterator().next();
+                msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
+            } else {
+                msg = Text.literal(String.format(SET_SUCCESS_MULTIPLE, targets.size(), amount));
+            }
+            source.sendFeedback(msg, true);
 
-        Text msg;
-        if (targets.size() == 1) {
-            Entity target = targets.iterator().next();
-            msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
-        } else {
-            msg = Text.literal(String.format(SET_SUCCESS_MULTIPLE, targets.size(), amount));
+            return sum;
         }
-        source.sendFeedback(msg, true);
-
-        return sum;
+        else {
+            Text msg = Text.literal(targets.size() == 1 ? SET_FAIL_SINGLE : SET_FAIL_MULTIPLE);
+            source.sendError(msg);
+            return 0;
+        }
     }
 
     /**
@@ -202,36 +208,47 @@ public class HealthCommand {
      * @return Returns the sum of the healths of each target after execution
      */
     private static int adjust(final ServerCommandSource source, final Collection<? extends Entity> targets, final int amount, final boolean shouldClamp, final boolean isRemoving) {
-        int sum = 0;
-        for (Entity target : targets) {
-            if (!(target instanceof LivingEntity livingTarget)) {
-                Text msg = Text.literal(String.format(isRemoving ? REMOVE_FAIL_SINGLE : ADD_FAIL_SINGLE, target.getDisplayName().getString()));
-                source.sendError(msg);
-                return sum;
+        if (allLiving(targets)) {
+            int sum = 0;
+
+            for (Entity target : targets) {
+                LivingEntity livingTarget = (LivingEntity) target;
+
+                int adjustedAmount = MathHelper.floor(livingTarget.getHealth() + amount);
+                if (shouldClamp) {
+                    adjustedAmount = MathHelper.clamp(adjustedAmount, 0, MathHelper.floor(livingTarget.getMaxHealth()));
+                }
+                livingTarget.setHealth(adjustedAmount);
+                sum += adjustedAmount;
             }
 
-            int adjustedAmount = Math.round(livingTarget.getHealth() + amount);
-            if (shouldClamp) {
-                adjustedAmount = MathHelper.clamp(adjustedAmount, 0, Math.round(livingTarget.getMaxHealth()));
+
+            Text msg;
+            if (targets.size() == 1) {
+                Entity target = targets.iterator().next();
+                String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
+                int health = MathHelper.floor(((LivingEntity) target).getHealth());
+                msg = Text.literal(String.format(format, MathHelper.abs(amount), target.getDisplayName().getString(), health));
+            } else {
+                String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
+                msg = Text.literal(String.format(format, MathHelper.abs(amount), targets.size()));
             }
-            livingTarget.setHealth(adjustedAmount);
-            sum += adjustedAmount;
+            source.sendFeedback(msg, true);
+
+            return sum;
         }
-
-
-        Text msg;
-        if (targets.size() == 1) {
-            Entity target = targets.iterator().next();
-            String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
-            int health = Math.round(((LivingEntity) target).getHealth());
-            msg = Text.literal(String.format(format, MathHelper.abs(amount), target.getDisplayName().getString(), health));
-        } else {
-            String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
-            msg = Text.literal(String.format(format, MathHelper.abs(amount), targets.size()));
+        else {
+            Text msg = Text.literal(targets.size() == 1
+                    ? (isRemoving
+                        ? REMOVE_FAIL_SINGLE
+                        : ADD_FAIL_SINGLE)
+                    : (isRemoving
+                        ? REMOVE_FAIL_MULTIPLE
+                        : ADD_FAIL_MULTIPLE)
+            );
+            source.sendError(msg);
+            return 0;
         }
-        source.sendFeedback(msg, true);
-
-        return sum;
     }
 
     /**
@@ -249,7 +266,7 @@ public class HealthCommand {
             return -1;
         }
 
-        int amount = Math.round(((LivingEntity) target).getHealth());
+        int amount = MathHelper.floor(((LivingEntity) target).getHealth());
 
         Text msg = Text.literal(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
@@ -272,10 +289,19 @@ public class HealthCommand {
             return -1;
         }
 
-        int amount = Math.round(((LivingEntity) target).getMaxHealth());
+        int amount = MathHelper.floor(((LivingEntity) target).getMaxHealth());
 
         Text msg = Text.literal(String.format(GET_MAX_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
+    }
+
+    private static boolean allLiving(Collection<? extends Entity> entities) {
+        for (Object obj : entities) {
+            if (!(obj instanceof LivingEntity)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
