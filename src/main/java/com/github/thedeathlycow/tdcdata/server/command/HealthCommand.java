@@ -3,9 +3,9 @@ package com.github.thedeathlycow.tdcdata.server.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -14,23 +14,22 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.Collection;
-
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class HealthCommand {
 
     private static final String ADD_SUCCESS_SINGLE = "Added %d health to %s (now %d)";
-    private static final String ADD_FAIL_SINGLE = "%s is not living";
     private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from %s (now %d)";
-    private static final String REMOVE_FAIL_SINGLE = "%s is not living";
     private static final String SET_SUCCESS_SINGLE = "Set the health of %s to %d";
-    private static final String SET_FAIL_SINGLE = "%s is not living";
     private static final String GET_CURRENT_SUCCESS = "%s has %d health";
-    private static final String GET_CURRENT_FAIL = "%s is not living";
     private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d health";
-    private static final String GET_MAX_FAIL = "%s is not living";
+
+    private static final DynamicCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new DynamicCommandExceptionType(
+            (playerName) -> {
+                return Text.literal(String.format("%s is not a living entity", playerName));
+            }
+    );
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
 
@@ -157,12 +156,11 @@ public class HealthCommand {
      * @param amount      The of health to set on each target.
      * @param shouldClamp Whether the amount should be clamped
      * @return Returns the sum of the healths of each target after execution
+     * @throws CommandSyntaxException Thrown if <code>target</code> is not a {@link LivingEntity}
      */
-    private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) {
+    private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            Text msg = Text.literal(String.format(SET_FAIL_SINGLE, target.getDisplayName().getString()));
-            source.sendError(msg);
-            return 0;
+            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int newHealth = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
@@ -187,12 +185,11 @@ public class HealthCommand {
      * @param shouldClamp Whether to clamp the final amount. Defaults to true.
      * @param isRemoving  Whether this command is removing or adding.
      * @return Returns the sum of the healths of each target after execution
+     * @throws CommandSyntaxException Thrown if <code>target</code> is not a {@link LivingEntity}
      */
-    private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) {
+    private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            Text msg = Text.literal(String.format(isRemoving ? REMOVE_FAIL_SINGLE : ADD_FAIL_SINGLE, target.getDisplayName().getString()));
-            source.sendError(msg);
-            return 0;
+            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int newHealth = MathHelper.floor(livingTarget.getHealth() + amount);
@@ -215,12 +212,11 @@ public class HealthCommand {
      * @param source The source of the command
      * @param target The targeted {@link LivingEntity} of the command
      * @return Returns the amount of health the target has.
+     * @throws CommandSyntaxException Thrown if <code>target</code> is not a {@link LivingEntity}
      */
-    private static int getCurrent(final ServerCommandSource source, final Entity target) {
+    private static int getCurrent(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            Text msg = Text.literal(String.format(GET_CURRENT_FAIL, target.getDisplayName().getString()));
-            source.sendError(msg);
-            return 0;
+            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int amount = MathHelper.floor(livingTarget.getHealth());
@@ -238,14 +234,12 @@ public class HealthCommand {
      * @param source The source of the command
      * @param target The targeted {@link LivingEntity} of the command
      * @return Returns the amount of maximum health the target can have.
+     * @throws CommandSyntaxException Thrown if <code>target</code> is not a {@link LivingEntity}
      */
-    private static int getMax(final ServerCommandSource source, final Entity target) {
+    private static int getMax(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            Text msg = Text.literal(String.format(GET_MAX_FAIL, target.getDisplayName().getString()));
-            source.sendError(msg);
-            return 0;
+            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
         }
-
         int amount = MathHelper.floor(livingTarget.getMaxHealth());
 
         Text msg = Text.literal(String.format(GET_MAX_SUCCESS, target.getDisplayName().getString(), amount));
