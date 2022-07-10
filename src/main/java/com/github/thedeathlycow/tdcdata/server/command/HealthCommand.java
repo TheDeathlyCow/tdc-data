@@ -25,9 +25,9 @@ public class HealthCommand {
     private static final String GET_CURRENT_SUCCESS = "%s has %d health";
     private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d health";
 
-    private static final DynamicCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new DynamicCommandExceptionType(
-            (playerName) -> {
-                return Text.literal(String.format("%s is not a living entity", playerName));
+    private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
+            (targetName) -> {
+                return Text.literal(String.format("%s is not a living entity", targetName));
             }
     );
 
@@ -160,7 +160,7 @@ public class HealthCommand {
      */
     private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int newHealth = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
@@ -189,7 +189,7 @@ public class HealthCommand {
      */
     private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int newHealth = MathHelper.floor(livingTarget.getHealth() + amount);
@@ -216,7 +216,7 @@ public class HealthCommand {
      */
     private static int getCurrent(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int amount = MathHelper.floor(livingTarget.getHealth());
@@ -238,7 +238,7 @@ public class HealthCommand {
      */
     private static int getMax(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
         int amount = MathHelper.floor(livingTarget.getMaxHealth());
 
