@@ -1,5 +1,6 @@
 package com.github.thedeathlycow.tdcdata;
 
+import com.github.thedeathlycow.tdcdata.server.command.*;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import com.github.thedeathlycow.tdcdata.server.command.FreezeCommand;
 import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
@@ -22,6 +23,7 @@ public class DatapackExtensions implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, dedicated, registryAccess) -> {
                     FreezeCommand.register(dispatcher, registryAccess);
+                    HealthCommand.register(dispatcher, registryAccess);
                     TeamModifyCommandAdditions.register(dispatcher, registryAccess);
                     ScoreboardCommandAdditions.register(dispatcher, registryAccess);
                     TimeCommandAdditions.register(dispatcher, registryAccess);
