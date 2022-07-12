@@ -26,8 +26,8 @@ public class TriggerSculkSensorCriterionMixin {
                     target = "Lnet/minecraft/block/SculkSensorBlock;setActive(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)V"
             )
     )
-    private static void triggerSculkSensorAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
-        if (sourceEntity instanceof ServerPlayerEntity serverPlayer) {
+    private void triggerSculkSensorAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
+        if (entity instanceof ServerPlayerEntity serverPlayer) {
             TdcDataAdvancementTriggers.TRIGGER_SCULK_SENSOR.trigger(serverPlayer, event, world, pos);
         }
     }
