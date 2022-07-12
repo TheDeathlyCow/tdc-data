@@ -20,7 +20,6 @@ public class PlayerTriggerGameEventCriterion extends AbstractCriterion<PlayerTri
 
     @Override
     protected PlayerTriggerGameEventCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-
         GameEventPredicate eventPredicate = GameEventPredicate.fromJson(json.get("event"));
         return new Conditions(player, eventPredicate);
     }
@@ -49,7 +48,7 @@ public class PlayerTriggerGameEventCriterion extends AbstractCriterion<PlayerTri
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject json = super.toJson(predicateSerializer);
             JsonElement eventJson = this.eventPredicate != null ? this.eventPredicate.toJson() : JsonNull.INSTANCE;
-            json.add("event", eventJson);;
+            json.add("event", eventJson);
             return json;
         }
 
