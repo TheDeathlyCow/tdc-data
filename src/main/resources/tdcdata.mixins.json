@@ -6,6 +6,7 @@
   "mixins": [
     "advancement_triggers.TriggerGameEventCriterionMixin",
     "advancement_triggers.TriggerSculkSensorCriterionMixin",
+    "advancement_triggers.TriggerSculkShriekerCriterionMixin",
     "command.ExecuteIfItemMixin",
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomArgRegistrationMixin",

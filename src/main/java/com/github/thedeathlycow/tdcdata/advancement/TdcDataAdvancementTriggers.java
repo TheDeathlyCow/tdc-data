@@ -8,10 +8,12 @@ public class TdcDataAdvancementTriggers {
 
     public static final PlayerTriggerGameEventCriterion TRIGGER_VIBRATION = new PlayerTriggerGameEventCriterion();
     public static final PlayerTriggerVibrationListener TRIGGER_SCULK_SENSOR = new PlayerTriggerVibrationListener(new Identifier(DatapackExtensions.MODID, "player_trigger_sculk_sensor"));
+    public static final PlayerTriggerVibrationListener TRIGGER_SCULK_SHRIEKER = new PlayerTriggerVibrationListener(new Identifier(DatapackExtensions.MODID, "player_trigger_sculk_shrieker"));
 
     public static void registerTriggers() {
         Criteria.register(TRIGGER_VIBRATION);
         Criteria.register(TRIGGER_SCULK_SENSOR);
+        Criteria.register(TRIGGER_SCULK_SHRIEKER);
     }
 
 }

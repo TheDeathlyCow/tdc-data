@@ -1,5 +1,6 @@
 package com.github.thedeathlycow.tdcdata.advancement;
 
+import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.github.thedeathlycow.tdcdata.predicate.GameEventPredicate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
