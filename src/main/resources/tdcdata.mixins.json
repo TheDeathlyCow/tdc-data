@@ -4,11 +4,12 @@
   "package": "com.github.thedeathlycow.tdcdata.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "advancement_triggers.TriggerGameEventCriterionMixin",
+    "advancement_triggers.TriggerSculkSensorCriterionMixin",
     "command.ExecuteIfItemMixin",
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomArgRegistrationMixin",
     "command.argument.CustomOperationMixin",
-    "advancement_triggers.TriggerGameEventCriterionMixin",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
     "scoreboard.teamrules.SerializeRulesMixin",

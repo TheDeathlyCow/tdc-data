@@ -22,10 +22,6 @@ public class TriggerGameEventCriterionMixin {
     private void triggerVibrationCriterion(GameEvent event, Vec3d emitterPos, GameEvent.Emitter emitter, CallbackInfo ci) {
         Entity entity = emitter.sourceEntity();
         if (entity instanceof ServerPlayerEntity serverPlayer) {
-            int frequency = -1;
-            if (SculkSensorBlock.FREQUENCIES.containsKey(event)) {
-                frequency = SculkSensorBlock.FREQUENCIES.getInt(event);
-            }
             TdcDataAdvancementTriggers.TRIGGER_VIBRATION.trigger(serverPlayer, event);
         }
     }
