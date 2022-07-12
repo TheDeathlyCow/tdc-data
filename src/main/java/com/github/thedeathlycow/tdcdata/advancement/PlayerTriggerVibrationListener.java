@@ -78,9 +78,7 @@ public class PlayerTriggerVibrationListener extends AbstractCriterion<PlayerTrig
                 return false;
             } else if (this.locationPredicate != null && !this.locationPredicate.test(world, position.getX(), position.getY(), position.getZ())) {
                 return false;
-            } else if (this.entityPredicate != null && listener == null) {
-                return false;
-            } else if (this.entityPredicate != null && !this.entityPredicate.test(world, listener.getPos(), listener)) {
+            } else if (this.entityPredicate != null && listener != null && !this.entityPredicate.test(world, listener.getPos(), listener)) {
                 return false;
             } else {
                 return true;

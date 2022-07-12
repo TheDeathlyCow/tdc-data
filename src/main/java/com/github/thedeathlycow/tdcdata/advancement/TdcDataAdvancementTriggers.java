@@ -15,7 +15,6 @@ public class TdcDataAdvancementTriggers {
         Criteria.register(TRIGGER_VIBRATION);
         Criteria.register(PLAYER_TRIGGER_SCULK_SENSOR);
         Criteria.register(PLAYER_TRIGGER_SCULK_SHRIEKER);
-        Criteria.register(PLAYER_TRIGGER_SCULK_SHRIEKER);
         Criteria.register(PLAYER_ALERTS_WARDEN);
     }
 
