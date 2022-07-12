@@ -25,7 +25,7 @@ public class TriggerSculkSensorCriterionMixin {
     )
     private void triggerSculkSensorAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
         if (entity instanceof ServerPlayerEntity serverPlayer) {
-            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SENSOR.trigger(serverPlayer, event, world, pos, null);
+            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SENSOR.trigger(serverPlayer, event, world, pos);
         }
     }
 }

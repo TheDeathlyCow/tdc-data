@@ -26,7 +26,7 @@ public class TriggerWardenCriterionMixin {
     private void triggerAlertWardenAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
         if (entity instanceof ServerPlayerEntity serverPlayer) {
             final WardenEntity instance = (WardenEntity) (Object) this;
-            TdcDataAdvancementTriggers.PLAYER_ALERTS_WARDEN.trigger(serverPlayer, event, world, instance.getBlockPos(), instance);
+            TdcDataAdvancementTriggers.PLAYER_ALERTS_WARDEN.trigger(serverPlayer, event, world, instance);
         }
     }
 }

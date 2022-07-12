@@ -24,7 +24,7 @@ public class TriggerSculkShriekerCriterionMixin {
     private void triggerSculkShriekerAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
         @Nullable ServerPlayerEntity player = SculkShriekerBlockEntity.findResponsiblePlayerFromEntity(sourceEntity != null ? sourceEntity : entity);
         if (player != null) {
-            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SHRIEKER.trigger(player, event, world, pos, null);
+            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SHRIEKER.trigger(player, event, world, pos);
         }
     }
 }
