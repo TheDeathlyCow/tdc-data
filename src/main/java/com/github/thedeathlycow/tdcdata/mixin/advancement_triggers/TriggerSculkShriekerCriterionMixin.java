@@ -1,10 +1,6 @@
 package com.github.thedeathlycow.tdcdata.mixin.advancement_triggers;
 
-import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.SculkShriekerBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -28,7 +24,7 @@ public class TriggerSculkShriekerCriterionMixin {
     private void triggerSculkShriekerAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
         @Nullable ServerPlayerEntity player = SculkShriekerBlockEntity.findResponsiblePlayerFromEntity(sourceEntity != null ? sourceEntity : entity);
         if (player != null) {
-            TdcDataAdvancementTriggers.TRIGGER_SCULK_SHRIEKER.trigger(player, event, world, pos);
+            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SHRIEKER.trigger(player, event, world, pos, null);
         }
     }
 }
