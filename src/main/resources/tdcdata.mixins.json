@@ -4,16 +4,17 @@
   "package": "com.github.thedeathlycow.tdcdata.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "advancement_triggers.TriggerVibrationCriterionMixin",
     "command.ExecuteIfItemMixin",
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomArgRegistrationMixin",
     "command.argument.CustomOperationMixin",
-    "advancement_triggers.TriggerVibrationCriterionMixin",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
     "scoreboard.teamrules.SerializeRulesMixin",
     "scoreboard.teamrules.ServerPlayerKeepInventoryMixin",
-    "scoreboard.teamrules.TeamRuleMixin"
+    "scoreboard.teamrules.TeamRuleMixin",
+    "stat_trackers.PickBlockPacketListenerMixin"
   ],
   "client": [
   ],
