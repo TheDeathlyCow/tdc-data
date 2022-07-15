@@ -3,15 +3,17 @@ package com.github.thedeathlycow.tdcdata.server.command.argument;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.Hand;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-public class HandArgumentType implements ArgumentType<String> {
+public class HandArgumentType implements ArgumentType<Hand> {
     private static final Collection<String> EXAMPLES = Arrays.asList("mainhand", "offhand");
 
     private HandArgumentType() {
@@ -21,13 +23,20 @@ public class HandArgumentType implements ArgumentType<String> {
         return new HandArgumentType();
     }
 
-    public static String getHand(final CommandContext<?> context, final String name) {
-        return context.getArgument(name, String.class);
+    public static Hand getHand(final CommandContext<?> context, final String name) {
+        return context.getArgument(name, Hand.class);
     }
 
     @Override
-    public String parse(StringReader stringReader) {
-        return stringReader.readUnquotedString();
+    public Hand parse(StringReader stringReader) {
+        String hand = stringReader.readUnquotedString();
+        if (hand.equals("mainhand")) {
+            return Hand.MAIN_HAND;
+        } else if (hand.equals("offhand")) {
+            return Hand.OFF_HAND;
+        } else {
+            throw new IllegalStateException(String.format("%s is not a valid hand", hand));
+        }
     }
 
     @Override

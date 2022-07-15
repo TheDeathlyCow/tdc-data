@@ -17,6 +17,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.Locale;
+
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -26,7 +28,7 @@ public class SwingCommand {
 
     private static final DynamicCommandExceptionType NOT_LIVING_PLAYER_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
-                return Text.literal(String.format("%s is not a living player", targetName));
+                return Text.literal(String.format("%s is not alive", targetName));
             }
     );
 
@@ -37,15 +39,15 @@ public class SwingCommand {
                                 .then(argument("hand", HandArgumentType.hand())
                                         .executes(context -> {
                                             PlayerEntity player = EntityArgumentType.getPlayer(context, "target");
-                                            String hand = HandArgumentType.getHand(context, "hand");
+                                            Hand hand = HandArgumentType.getHand(context, "hand");
 
                                             if (!player.isLiving()) {
                                                 throw NOT_LIVING_PLAYER_EXCEPTION.create(player.getDisplayName().getString());
                                             }
 
-                                            player.swingHand(hand.equals("mainhand") ? Hand.MAIN_HAND : Hand.OFF_HAND, true);
-
-                                            Text msg = Text.literal(String.format(SWING_SUCCESS, player.getDisplayName().getString(), hand));
+                                            player.swingHand(hand, true);
+                                            String handName = hand.name().toLowerCase().replace('_', ' ');
+                                            Text msg = Text.literal(String.format(SWING_SUCCESS, player.getDisplayName().getString(), handName));
                                             context.getSource().sendFeedback(msg, true);
 
                                             return 0;
