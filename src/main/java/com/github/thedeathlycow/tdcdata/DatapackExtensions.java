@@ -1,5 +1,6 @@
 package com.github.thedeathlycow.tdcdata;
 
+import com.github.thedeathlycow.tdcdata.scoreboard.stat.TdcDataCustomStats;
 import com.github.thedeathlycow.tdcdata.server.command.*;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import com.github.thedeathlycow.tdcdata.server.command.FreezeCommand;
@@ -31,13 +32,11 @@ public class DatapackExtensions implements ModInitializer {
     public static final String MODID = "tdcdata";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-    public static final Identifier STAT_LEFT_CLICK = new Identifier(MODID, "mouse_left_click");
-    public static final Identifier STAT_RIGHT_CLICK = new Identifier(MODID, "mouse_right_click");
-
     @Override
     public void onInitialize() {
-        registerMouseClicks();
         ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "hand"), HandArgumentType.class, ConstantArgumentSerializer.of(HandArgumentType::hand));
+
+        TdcDataCustomStats.registerCustomStats();
 
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, dedicated, registryAccess) -> {
@@ -51,45 +50,5 @@ public class DatapackExtensions implements ModInitializer {
         );
         TdcDataAdvancementTriggers.registerTriggers();
         LOGGER.info("Datapack Extensions initialized!");
-    }
-
-    private void registerMouseClicks() {
-
-        Registry.register(Registry.CUSTOM_STAT, STAT_LEFT_CLICK, STAT_LEFT_CLICK);
-        Registry.register(Registry.CUSTOM_STAT, STAT_RIGHT_CLICK, STAT_RIGHT_CLICK);
-
-        Stats.CUSTOM.getOrCreateStat(STAT_LEFT_CLICK, StatFormatter.DEFAULT);
-        Stats.CUSTOM.getOrCreateStat(STAT_RIGHT_CLICK, StatFormatter.DEFAULT);
-
-        // Right click detection
-        UseItemCallback.EVENT.register((player, world, hand) -> {
-            player.incrementStat(STAT_RIGHT_CLICK);
-
-            //player.getStackInHand(hand)
-            //player.swingHand(player.getActiveHand());
-            return TypedActionResult.pass(ItemStack.EMPTY);
-        });
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            player.incrementStat(STAT_RIGHT_CLICK);
-
-            return ActionResult.PASS;
-        });
-        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            player.incrementStat(STAT_RIGHT_CLICK);
-
-            return ActionResult.PASS;
-        });
-
-        // Left click detection
-        AttackEntityCallback.EVENT.register(((player, world, hand, entity, hitResult) -> {
-            player.incrementStat(STAT_LEFT_CLICK);
-
-            return ActionResult.PASS;
-        }));
-        AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-            player.incrementStat(STAT_LEFT_CLICK);
-
-            return ActionResult.PASS;
-        });
     }
 }
