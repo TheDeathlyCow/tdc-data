@@ -13,13 +13,13 @@ public class AttackStat {
         // Left click detection
         AttackEntityCallback.EVENT.register(((player, world, hand, entity, hitResult) -> {
             if (!world.isClient) {
-                player.incrementStat(TdcDataCustomStats.ATTACK);
+                player.incrementStat(TdcDataCustomStats.ATTACK_ENTITY);
             }
             return ActionResult.PASS;
         }));
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
             if (!world.isClient) {
-                player.incrementStat(TdcDataCustomStats.ATTACK);
+                player.incrementStat(TdcDataCustomStats.ATTACK_BLOCK);
             }
             return ActionResult.PASS;
         });
