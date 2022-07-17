@@ -12,6 +12,7 @@ public class TdcDataAdvancementTriggers {
 
     public static void registerTriggers() {
         Criteria.register(TRIGGER_VIBRATION);
+        Criteria.register(USE_ITEM);
     }
 
 }
