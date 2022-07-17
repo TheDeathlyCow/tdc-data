@@ -1,6 +1,9 @@
 package com.github.thedeathlycow.tdcdata.mixin.advancement_triggers;
 
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.SculkSensorBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,7 +17,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SculkSensorBlockEntity.class)
-public class TriggerSculkSensorCriterionMixin {
+public class TriggerSculkSensorCriterionMixin extends BlockEntity {
+
+    public TriggerSculkSensorCriterionMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
 
     @Inject(
             method = "accept",
@@ -25,7 +32,7 @@ public class TriggerSculkSensorCriterionMixin {
     )
     private void triggerSculkSensorAdvancement(ServerWorld world, GameEventListener listener, BlockPos pos, GameEvent event, Entity entity, Entity sourceEntity, float distance, CallbackInfo ci) {
         if (entity instanceof ServerPlayerEntity serverPlayer) {
-            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SENSOR.trigger(serverPlayer, event, world, pos);
+            TdcDataAdvancementTriggers.PLAYER_TRIGGER_SCULK_SENSOR.trigger(serverPlayer, event, world, this.getPos());
         }
     }
 }
