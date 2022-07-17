@@ -83,7 +83,7 @@ Where possible, it would be nice if you could provide testmod cases with your pu
 
 For translations into other languages: you can provide translations either in a file in an [issue](https://github.com/TheDeathlyCow/tdc-data/issues) or as a [pull request](https://github.com/TheDeathlyCow/tdc-data/pulls). I am happy for your translations either way!
 
-Because this is a server side mod, we cannot use our the regular translation system Minecraft provides for serverside features. If possible, you should reuse translations from vanilla, but if you want to add a new message, you must use literal text objects instead. All non-translatable messages should be in United States English, as this is the language Minecraft uses by default. Clientside features may of course use regular translatable objects. For features that force translation (like the names of statistics), you may provide translations for those as well.
+Because this is a server side mod, we cannot use the regular translation system Minecraft provides for serverside features. If possible, you should reuse translations from vanilla, but if you want to add a new message, you must use literal text objects instead. All non-translatable messages should be in United States English, as this is the language Minecraft uses by default. Clientside features may of course use regular translatable objects. For features that force translation (like the names of statistics), you may provide translations for those as well.
 
 # Existing Features in Other Mods
 
