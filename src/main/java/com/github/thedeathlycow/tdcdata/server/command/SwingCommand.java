@@ -26,7 +26,13 @@ public class SwingCommand {
 
     private static final String SWING_SUCCESS = "Swung %s's %s";
 
-    private static final DynamicCommandExceptionType NOT_LIVING_PLAYER_EXCEPTION = new DynamicCommandExceptionType(
+    private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
+            (targetName) -> {
+                return Text.literal(String.format("%s is not a living entity", targetName));
+            }
+    );
+
+    private static final DynamicCommandExceptionType TARGET_IS_DEAD_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
                 return Text.literal(String.format("%s is not alive", targetName));
             }
@@ -35,23 +41,34 @@ public class SwingCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
         dispatcher.register(
                 (literal("swing").requires((src) -> src.hasPermissionLevel(2)))
-                        .then(argument("target", EntityArgumentType.player())
+                        .then(argument("target", EntityArgumentType.entity())
                                 .then(argument("hand", HandArgumentType.hand())
                                         .executes(context -> {
-                                            PlayerEntity player = EntityArgumentType.getPlayer(context, "target");
-                                            Hand hand = HandArgumentType.getHand(context, "hand");
-
-                                            if (!player.isLiving()) {
-                                                throw NOT_LIVING_PLAYER_EXCEPTION.create(player.getDisplayName().getString());
-                                            }
-
-                                            player.swingHand(hand, true);
-                                            String handName = hand.name().toLowerCase().replace('_', ' ');
-                                            Text msg = Text.literal(String.format(SWING_SUCCESS, player.getDisplayName().getString(), handName));
-                                            context.getSource().sendFeedback(msg, true);
-
-                                            return 0;
+                                            return executeSwing(
+                                                    context.getSource(),
+                                                    EntityArgumentType.getEntity(context, "target"),
+                                                    HandArgumentType.getHand(context, "hand")
+                                            );
                                         })))
         );
+    }
+
+
+    private static int executeSwing(final ServerCommandSource source, Entity target, Hand hand) throws CommandSyntaxException {
+
+        if (target instanceof LivingEntity livingTarget) {
+            if (!target.isAlive()) {
+                throw TARGET_IS_DEAD_EXCEPTION.create(target.getDisplayName().getString());
+            }
+
+            livingTarget.swingHand(hand, true);
+            String handName = hand.name().toLowerCase().replace('_', ' ');
+            Text msg = Text.literal(String.format(SWING_SUCCESS, target.getDisplayName().getString(), handName));
+            source.sendFeedback(msg, true);
+
+            return 1;
+        } else {
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+        }
     }
 }
