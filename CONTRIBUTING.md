@@ -13,9 +13,11 @@ Quick links:
 |---------------------------------------------------------------------|
 | [General Guidelines](#General Guidelines)                           |
 | [Commands](#Commands)                                               |
-| [Existing Features in Other Mods](#Existing Features in Other Mods) | 
-| [Code Guidelines](#Code Guidelines )                                |
+| [Advancements](#Advancement Criteria and Predicates)                |
+| [Code Guidelines](#Code Guidelines)                                 |
+| [Testing](#Testing)                                                 |
 | [Translation](#Translation)                                         |
+| [Existing Features in Other Mods](#Existing Features in Other Mods) | 
 
 
 # General Guidelines
