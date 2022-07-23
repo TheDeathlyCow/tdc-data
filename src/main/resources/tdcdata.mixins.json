@@ -5,6 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "advancement_triggers.TriggerVibrationCriterionMixin",
+    "advancement_triggers.TriggerGameEventCriterionMixin",
+    "advancement_triggers.TriggerSculkSensorCriterionMixin",
+    "advancement_triggers.TriggerSculkShriekerCriterionMixin",
+    "advancement_triggers.TriggerWardenCriterionMixin",
     "command.ExecuteIfItemMixin",
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomArgRegistrationMixin",
