@@ -1,30 +1,24 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
-
-import java.util.Locale;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class SwingCommand {
+public class AnimateCommand {
 
-    private static final String SWING_SUCCESS = "Swung %s's %s";
+    private static final String SWING_SUCCESS = "Animated swung %s's %s";
+    private static final String HURT_SUCCESS = "Animated hurt %s";
 
     private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
@@ -40,17 +34,17 @@ public class SwingCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
         dispatcher.register(
-                (literal("swing").requires((src) -> src.hasPermissionLevel(2)))
+                (literal("animate").requires((src) -> src.hasPermissionLevel(2)))
                         .then(argument("target", EntityArgumentType.entity())
-                                .then(argument("hand", HandArgumentType.hand())
-                                        .executes(context -> {
-                                            return executeSwing(
-                                                    context.getSource(),
-                                                    EntityArgumentType.getEntity(context, "target"),
-                                                    HandArgumentType.getHand(context, "hand")
-                                            );
-                                        })))
-        );
+                                .then(literal("swing")
+                                        .then(argument("hand", HandArgumentType.hand())
+                                                .executes(context -> {
+                                                    return executeSwing(
+                                                            context.getSource(),
+                                                            EntityArgumentType.getEntity(context, "target"),
+                                                            HandArgumentType.getHand(context, "hand")
+                                                    );
+                                                })))));
     }
 
 
