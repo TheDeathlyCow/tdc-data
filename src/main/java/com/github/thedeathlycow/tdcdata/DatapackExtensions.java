@@ -3,13 +3,11 @@ package com.github.thedeathlycow.tdcdata;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import com.github.thedeathlycow.tdcdata.scoreboard.stat.TdcDataCustomStats;
 import com.github.thedeathlycow.tdcdata.server.command.*;
-import com.github.thedeathlycow.tdcdata.server.command.ScoreboardCommandAdditions;
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.NbtTypesArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -31,7 +29,7 @@ public class DatapackExtensions implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, dedicated, registryAccess) -> {
                     VarCommand.register(dispatcher, registryAccess);
-                    AnimateCommand.register(dispatcher, registryAccess);
+                    PlayAnimationCommand.register(dispatcher, registryAccess);
                     FreezeCommand.register(dispatcher, registryAccess);
                     HealthCommand.register(dispatcher, registryAccess);
                     TeamModifyCommandAdditions.register(dispatcher, registryAccess);
