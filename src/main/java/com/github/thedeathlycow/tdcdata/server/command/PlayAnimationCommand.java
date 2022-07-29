@@ -59,6 +59,12 @@ public class PlayAnimationCommand {
             }
     );
 
+    private static final DynamicCommandExceptionType SAME_TARGET_EXCEPTION = new DynamicCommandExceptionType(
+            (targetName) -> {
+                return Text.literal(String.format("%s cannot ride itself", targetName));
+            }
+    );
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
         dispatcher.register(
                 (literal("playanimation").requires((src) -> src.hasPermissionLevel(2)))
@@ -79,6 +85,23 @@ public class PlayAnimationCommand {
                                                     EntityArgumentType.getEntity(context, "target")
                                             );
                                         }))
+                                .then(literal("ride")
+                                        .then(literal("mount")
+                                                .then(argument("destination", EntityArgumentType.entity())
+                                                        .executes(context -> {
+                                                            return executeMount(
+                                                                    context.getSource(),
+                                                                    EntityArgumentType.getEntity(context, "target"),
+                                                                    EntityArgumentType.getEntity(context, "destination")
+                                                            );
+                                                        })))
+                                        .then(literal("dismount")
+                                                .executes(context -> {
+                                                    return executeDismount(
+                                                            context.getSource(),
+                                                            EntityArgumentType.getEntity(context, "target")
+                                                    );
+                                                })))
                                 .then(literal("jump")
                                         .then(argument("intensity", FloatArgumentType.floatArg())
                                                 .executes(context -> {
@@ -192,5 +215,22 @@ public class PlayAnimationCommand {
         } else {
             throw NOT_POLAR_BEAR_ENITY_EXCEPTION.create(target.getDisplayName().getString());
         }
+    }
+
+    private static int executeMount(final ServerCommandSource source, Entity target, Entity destination) throws CommandSyntaxException {
+
+        if (target.getId() == destination.getId()) {
+            throw SAME_TARGET_EXCEPTION.create(target.getDisplayName().getString());
+        }
+        target.startRiding(destination, true);
+
+        return 1;
+    }
+
+    private static int executeDismount(final ServerCommandSource source, Entity target) throws CommandSyntaxException {
+
+        target.stopRiding();
+
+        return 1;
     }
 }
