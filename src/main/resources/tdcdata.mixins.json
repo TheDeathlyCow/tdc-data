@@ -9,7 +9,6 @@
     "advancement_triggers.TriggerSculkShriekerCriterionMixin",
     "advancement_triggers.TriggerWardenCriterionMixin",
     "command.ExecuteIfItemMixin",
-    "command.ExecuteIfVarMixin",
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomArgRegistrationMixin",
     "command.argument.CustomOperationMixin",
