@@ -11,6 +11,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -20,6 +21,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.EnchantCommand;
 import net.minecraft.server.command.ServerCommandSource;
@@ -32,10 +35,14 @@ public class SuperEnchantCommand {
 
 
     private static final DynamicCommandExceptionType FAILED_ENTITY_EXCEPTION = new DynamicCommandExceptionType((entityName) -> {
-        return Text.translatable("commands.enchant.failed.entity", new Object[]{entityName});
+        return Text.translatable("commands.enchant.failed.entity", entityName);
     });
     private static final DynamicCommandExceptionType FAILED_ITEMLESS_EXCEPTION = new DynamicCommandExceptionType((entityName) -> {
-        return Text.translatable("commands.enchant.failed.itemless", new Object[]{entityName});
+        return Text.translatable("commands.enchant.failed.itemless", entityName);
+    });
+
+    private static final DynamicCommandExceptionType FAILED_INCOMPATIBLE_EXCEPTION = new DynamicCommandExceptionType((itemName) -> {
+        return Text.translatable("commands.enchant.failed.incompatible", itemName);
     });
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
@@ -65,6 +72,12 @@ public class SuperEnchantCommand {
         if (target instanceof LivingEntity livingEntity) {
             ItemStack itemStack = livingEntity.getMainHandStack();
             if (!itemStack.isEmpty()) {
+                Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(itemStack);
+
+                if (enchantments.containsKey(enchantment)) {
+                    throw FAILED_INCOMPATIBLE_EXCEPTION.create(itemStack.getItem().getName(itemStack).getString());
+                }
+
                 itemStack.addEnchantment(enchantment, level);
 
                 source.sendFeedback(
