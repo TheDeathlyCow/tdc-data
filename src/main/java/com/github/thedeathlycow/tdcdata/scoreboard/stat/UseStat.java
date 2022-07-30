@@ -1,6 +1,5 @@
 package com.github.thedeathlycow.tdcdata.scoreboard.stat;
 
-import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;

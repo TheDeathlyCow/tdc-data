@@ -1,7 +1,6 @@
 package com.github.thedeathlycow.tdcdata.mixin.advancement_triggers;
 
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
-import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;

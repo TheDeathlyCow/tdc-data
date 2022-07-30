@@ -8,7 +8,11 @@ import com.github.thedeathlycow.tdcdata.server.command.argument.NbtTypesArgument
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,22 @@ public class DatapackExtensions implements ModInitializer {
         ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "hand"), HandArgumentType.class, ConstantArgumentSerializer.of(HandArgumentType::hand));
         ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "nbt_type"), NbtTypesArgumentType.class, ConstantArgumentSerializer.of(NbtTypesArgumentType::types));
 
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public Identifier getFabricId() {
+                return new Identifier(MODID, "assets");
+            }
+
+            @Override
+            public void reload(ResourceManager manager) {
+                LOGGER.info("Reloading translations");
+                manager.findResources(".", path -> path.getPath().endsWith(".json")).forEach((identifier, resource) -> {
+                    if (identifier.getPath().equals("server_lang.json")) {
+                        DatapackExtensionsTranslator.loadTranslations(resource);
+                    }
+                });
+            }
+        });
         TdcDataCustomStats.registerCustomStats();
 
         CommandRegistrationCallback.EVENT.register(
