@@ -1,30 +1,31 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
+import com.github.thedeathlycow.tdcdata.DatapackExtensionsExceptions;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.EnchantCommand;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
+
+import java.util.Map;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class SuperEnchantCommand {
+
+    private static final DynamicCommandExceptionType FAILED_INCOMPATIBLE_EXCEPTION = new DynamicCommandExceptionType((itemName) -> {
+        return Text.translatable("commands.enchant.failed.incompatible", itemName);
+    });
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
 
         dispatcher.register(
