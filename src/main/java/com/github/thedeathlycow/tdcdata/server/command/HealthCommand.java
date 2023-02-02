@@ -136,11 +136,14 @@ public class HealthCommand {
                 );
 
         dispatcher.register(
-                (literal("health").requires((src) -> src.hasPermissionLevel(2)))
-                        .then(getSubCommand)
-                        .then(removeSubCommand)
-                        .then(addSubCommand)
-                        .then(setSubCommand)
+                literal("tdcdata")
+                        .then(
+                                (literal("health").requires((src) -> src.hasPermissionLevel(2)))
+                                        .then(getSubCommand)
+                                        .then(removeSubCommand)
+                                        .then(addSubCommand)
+                                        .then(setSubCommand)
+                        )
         );
     }
 

@@ -30,7 +30,7 @@ This mod is a server side mod, which means that no matter what you add, it shoul
 
 New features should **NEVER** change or break vanilla behaviours. If a datapack works on a vanilla server, it should work exactly the same on a server with this mod. Changing or breaking vanilla features will almost certainly have unpredictable consequences for datapacks. Server owners should know that when they install this mod, all of their already existing datapacks will still work exactly the same as they did before. After all, mod is called Datapack *Extensions*, not Datapack *Modifications*.
 
-While vanilla datapacks must always work with this mod, the reverse is not true. Therefore, it should be clear that when someone is using a feature of this mod that extends a vanilla feature. This could just be as simple as prefixing the parent element of your feature with this mod's ID, `tdcdata`. This makes it clear to people who are reading code made by datapack authors using this mod that they are using a feature added by this mod, and also avoid conflicts with features with the same name if they were ever to be implemented by vanilla. However, when adding a completely brand-new command, this is not strictly necessary, as the new command will be obvious to most people that is not vanilla by itself. Below are some examples of how you can do this in various contexts:
+While vanilla datapacks must always work with this mod, the reverse is not true. Therefore, it should be clear that when someone is using a feature of this mod that extends a vanilla feature. This could just be as simple as prefixing the parent element of your feature with this mod's ID, `tdcdata`. This makes it clear to people who are reading code made by datapack authors using this mod that they are using a feature added by this mod, and also avoid conflicts with features with the same name if they were ever to be implemented by vanilla. Below are some examples of how you can do this in various contexts:
 
 Adding a new field to a vanilla JSON object: The outermost field of your object should be prefixed with `tdcdata.`. For example, in the [light type predicate](https://github.com/TheDeathlyCow/tdc-data/wiki/Light-Type-Predicate):
 
@@ -49,6 +49,21 @@ Adding a new field to a vanilla JSON object: The outermost field of your object 
 }
 ```
 
+Adding a brand new command: The command should be added as sub-command of `/tdcdata`. Using the freeze command as an example:
+```java
+dispatcher.register(
+        literal("tdcdata")
+                .then(
+                        (literal("freeze").requires((src) -> src.hasPermissionLevel(2)))
+                                .then(getSubCommand)
+                                .then(removeSubCommand)
+                                .then(addSubCommand)
+                                .then(setSubCommand)
+                )
+);
+```
+
+
 Adding a new sub-command to a vanilla command: The beginning of the subcommand should be a literal prefixed with `tdcdata.`. For example in the [item condition of the execute command](https://github.com/TheDeathlyCow/tdc-data/wiki/Execute-Additions#execute-if-item), instead of using ```execute (if | unless) item```, we instead use ```execute (if | unless) tdcdata.item```. The only exception to this are the extra operations of `/scoreboard players operation`, as there wasn't really a way of doing this that looked 'nice'.
 
 Adding new tags, advancement criteria, or other registered things: Register them under the namespace `tdcdata`. For example, the trigger `player_trigger_game_event` must be referred to by datapacks as `tdcdata:player_trigger_game_event`.
@@ -58,6 +73,8 @@ When serializing new pieces of data to NBT, it is best to put your custom data i
 ## Commands
 
 New commands should generally do something that cannot be done in vanilla, can only be done with NBT data, or can only be done in some way in vanilla that is not particularly elegant. That last point is somewhat subjective, but covers things like NBT Crafting which requires a lot of overhead to implement and doesn't jive particularly well with how crafting normally works. Commands like [/freeze](https://github.com/TheDeathlyCow/tdc-data/wiki/Freeze-Command) and [/health](https://github.com/TheDeathlyCow/tdc-data/wiki/Health-Command) are good examples of commands that do something that can otherwise only really be done with NBT data.
+
+All new commands should be added as sub-commands of `/tdcdata`. For example, `/tdcdata health` or `/tdcdata freeze`. This is for compatibility and to clearly signpost that the command is from this mod and not vanilla.
 
 ## Advancement Criteria and Predicates
 

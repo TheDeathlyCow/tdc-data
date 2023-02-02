@@ -153,11 +153,14 @@ public class FreezeCommand {
                 );
 
         dispatcher.register(
-                (literal("freeze").requires((src) -> src.hasPermissionLevel(2)))
-                        .then(getSubCommand)
-                        .then(removeSubCommand)
-                        .then(addSubCommand)
-                        .then(setSubCommand)
+                literal("tdcdata")
+                        .then(
+                                (literal("freeze").requires((src) -> src.hasPermissionLevel(2)))
+                                        .then(getSubCommand)
+                                        .then(removeSubCommand)
+                                        .then(addSubCommand)
+                                        .then(setSubCommand)
+                        )
         );
     }
 
