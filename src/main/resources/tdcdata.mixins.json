@@ -16,8 +16,7 @@
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
     "scoreboard.teamrules.SerializeRulesMixin",
     "scoreboard.teamrules.ServerPlayerKeepInventoryMixin",
-    "scoreboard.teamrules.TeamRuleMixin",
-    "stat_trackers.PickBlockPacketListenerMixin"
+    "scoreboard.teamrules.TeamRuleMixin"
   ],
   "client": [
   ],

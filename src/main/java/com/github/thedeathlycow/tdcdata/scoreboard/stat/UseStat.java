@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 
 public class UseStat {
@@ -22,7 +23,7 @@ public class UseStat {
             return TypedActionResult.pass(ItemStack.EMPTY);
         });
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (!world.isClient) {
+            if (!world.isClient && hand == Hand.MAIN_HAND) {
                 player.incrementStat(TdcDataCustomStats.USE_BLOCK);
             }
             return ActionResult.PASS;
