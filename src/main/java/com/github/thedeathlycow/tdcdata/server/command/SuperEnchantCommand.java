@@ -63,8 +63,11 @@ public class SuperEnchantCommand {
                 );
 
         dispatcher.register(
-                (literal("superenchant").requires((src) -> src.hasPermissionLevel(2)))
-                        .then(targets)
+                literal("tdcdata")
+                        .then(
+                                (literal("superenchant").requires((src) -> src.hasPermissionLevel(2)))
+                                        .then(targets)
+                        )
         );
     }
 
