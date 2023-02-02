@@ -38,11 +38,12 @@ public class PlayAnimationCommand {
     private static final String HURT_SUCCESS = "Animated hurt for %s";
     private static final String WARN_SUCCESS = "Animated warn for %s with state %s";
 
-    private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
+    private static final DynamicCommandExceptionType FAILED_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
-                return Text.literal(String.format("%s is not a living entity", targetName));
+                return Text.translatable("commands.enchant.failed.entity", targetName);
             }
     );
+
 
     private static final DynamicCommandExceptionType NOT_POLAR_BEAR_ENITY_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
@@ -177,14 +178,17 @@ public class PlayAnimationCommand {
                 );
 
         dispatcher.register(
-                (literal("playanimation").requires((src) -> src.hasPermissionLevel(2)))
+                literal("tdcdata")
                         .then(
-                                argument("target", EntityArgumentType.entity())
-                                        .then(swingAnimation)
-                                        .then(hurtAnimation)
-                                        .then(rideAnimation)
-                                        .then(jumpAnimation)
-                                        .then(warnAnimation)
+                                (literal("playanimation").requires((src) -> src.hasPermissionLevel(2)))
+                                        .then(
+                                                argument("target", EntityArgumentType.entity())
+                                                        .then(swingAnimation)
+                                                        .then(hurtAnimation)
+                                                        .then(rideAnimation)
+                                                        .then(jumpAnimation)
+                                                        .then(warnAnimation)
+                                        )
                         )
         );
     }
@@ -197,13 +201,14 @@ public class PlayAnimationCommand {
             }
 
             livingTarget.swingHand(hand, true);
-            String handName = hand.name().toLowerCase().replace('_', ' ');
-            Text msg = Text.literal(String.format(SWING_SUCCESS, target.getDisplayName().getString(), handName));
+
+            Text msg = Text.literal("Swung ")
+                    .append(target.getDisplayName());
             source.sendFeedback(msg, true);
 
             return 1;
         } else {
-            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
     }
 
@@ -221,7 +226,7 @@ public class PlayAnimationCommand {
 
             return 1;
         } else {
-            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
     }
 
