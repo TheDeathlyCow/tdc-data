@@ -7,7 +7,6 @@ import net.minecraft.text.Text;
 
 import java.time.Instant;
 
-import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class TimeCommandAdditions {
@@ -16,7 +15,7 @@ public class TimeCommandAdditions {
 
         var querySysTime = literal("tdcdata.epoch")
                 .executes((context) -> {
-                    return executeQuery(context.getSource(), (int) (Instant.now().getEpochSecond() % Integer.MAX_VALUE));
+                    return executeQueryEpoch(context.getSource(), (int) (Instant.now().getEpochSecond() % Integer.MAX_VALUE));
                 });
 
         dispatcher.register(
@@ -27,7 +26,7 @@ public class TimeCommandAdditions {
         );
     }
 
-    private static int executeQuery(ServerCommandSource source, int time) {
+    private static int executeQueryEpoch(ServerCommandSource source, int time) {
         source.sendFeedback(Text.translatable("commands.time.query", time), false);
         return time;
     }

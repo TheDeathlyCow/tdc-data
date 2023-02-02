@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -19,15 +20,14 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class HealthCommand {
 
-    private static final String ADD_SUCCESS_SINGLE = "Added %d health to %s (now %d)";
-    private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from %s (now %d)";
-    private static final String SET_SUCCESS_SINGLE = "Set the health of %s to %d";
-    private static final String GET_CURRENT_SUCCESS = "%s has %d health";
-    private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d health";
+    private static final String ADD_SUCCESS_SINGLE = "Added %d health to ";
+    private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from ";
+    private static final String GET_CURRENT_SUCCESS = "has %f health";
+    private static final String GET_MAX_SUCCESS = "can have a maximum of %f health";
 
-    private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
+    private static final DynamicCommandExceptionType FAILED_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
-                return Text.literal(String.format("%s is not a living entity", targetName));
+                return Text.translatable("commands.enchant.failed.entity", targetName);
             }
     );
 
@@ -163,14 +163,17 @@ public class HealthCommand {
      */
     private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
         }
 
         int newHealth = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
 
         livingTarget.setHealth(newHealth);
 
-        Text msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
+        Text msg = Text.literal("Set the health of ")
+                .append(target.getDisplayName())
+                .append(String.format(" to %f", livingTarget.getHealth()));
+
         source.sendFeedback(msg, true);
         return newHealth;
     }
@@ -192,7 +195,7 @@ public class HealthCommand {
      */
     private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
         }
 
         int newHealth = MathHelper.floor(livingTarget.getHealth() + amount);
@@ -202,9 +205,17 @@ public class HealthCommand {
 
         livingTarget.setHealth(newHealth);
 
-        // NOTE: The reason that we run livingTarget.getHealth() is because the setHealth() method may have modified the value we passed in.
-        Text msg = Text.literal(String.format(isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE, amount, target.getDisplayName().getString(), livingTarget.getHealth()));
+        MutableText msg = Text.empty();
+        if (isRemoving) {
+            msg.append(String.format(REMOVE_SUCCESS_SINGLE, amount));
+        } else {
+            msg.append(String.format(ADD_SUCCESS_SINGLE, amount));
+        }
+
+        msg.append(target.getDisplayName());
+        msg.append(String.format(" (now %f)", livingTarget.getHealth()));
         source.sendFeedback(msg, true);
+
         return newHealth;
     }
 
@@ -219,14 +230,17 @@ public class HealthCommand {
      */
     private static int getCurrent(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
         }
 
-        int amount = MathHelper.floor(livingTarget.getHealth());
+        float amount = livingTarget.getHealth();
 
-        Text msg = Text.literal(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().getString(), amount));
+        Text msg = Text.empty()
+                .append(target.getDisplayName())
+                .append(String.format(GET_CURRENT_SUCCESS, amount));
+
         source.sendFeedback(msg, true);
-        return amount;
+        return MathHelper.floor(amount);
     }
 
     /**
@@ -241,12 +255,16 @@ public class HealthCommand {
      */
     private static int getMax(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
         }
-        int amount = MathHelper.floor(livingTarget.getMaxHealth());
 
-        Text msg = Text.literal(String.format(GET_MAX_SUCCESS, target.getDisplayName().getString(), amount));
+        float amount = livingTarget.getMaxHealth();
+
+        Text msg = Text.empty()
+                .append(target.getDisplayName())
+                .append(String.format(GET_MAX_SUCCESS, amount));
+
         source.sendFeedback(msg, true);
-        return amount;
+        return MathHelper.floor(amount);
     }
 }
