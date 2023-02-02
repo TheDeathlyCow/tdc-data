@@ -22,8 +22,8 @@ public class HealthCommand {
 
     private static final String ADD_SUCCESS_SINGLE = "Added %d health to ";
     private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from ";
-    private static final String GET_CURRENT_SUCCESS = "has %f health";
-    private static final String GET_MAX_SUCCESS = "can have a maximum of %f health";
+    private static final String GET_CURRENT_SUCCESS = " has %f health";
+    private static final String GET_MAX_SUCCESS = " can have a maximum of %f health";
 
     private static final DynamicCommandExceptionType FAILED_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
             (targetName) -> {
