@@ -16,10 +16,9 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class TeamModifyCommandAdditions {
 
-    private static final String KEEPINV_SUCCESS = "Set Keep Inventory for team [%s] to %s";
-    private static final String KEEPINV_UNCHANGED = "Nothing changed. Keep Inventory already has that value";
-
-    private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANED_EXCEPTION = new SimpleCommandExceptionType(Text.literal(KEEPINV_UNCHANGED));
+    private static final SimpleCommandExceptionType KEEP_INVENTORY_UNCHANGED_EXCEPTION = new SimpleCommandExceptionType(
+            Text.literal("Nothing changed. Keep Inventory already has that value")
+    );
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
         var keepInventoryRule = argument("team", TeamArgumentType.team())
@@ -64,10 +63,14 @@ public class TeamModifyCommandAdditions {
         RuledTeam ruledTeam = ((RuledTeam) team);
 
         if (ruledTeam.tdcdata$shouldKeepInventory() == value) {
-            throw KEEP_INVENTORY_UNCHANED_EXCEPTION.create();
+            throw KEEP_INVENTORY_UNCHANGED_EXCEPTION.create();
         } else {
             ruledTeam.tdcdata$setKeepInventory(value);
-            Text msg = Text.literal(String.format(KEEPINV_SUCCESS, team.getDisplayName().getString(), value));
+
+            Text msg = Text.literal("Set Keep Inventory for team ")
+                    .append(team.getDisplayName())
+                    .append(String.format(" to %s", value));
+
             source.sendFeedback(msg, true);
         }
 
