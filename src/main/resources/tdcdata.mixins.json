@@ -11,6 +11,7 @@
     "command.ExecuteIfItemMixin",
     "command.ExecuteStoreAttributeCommandMixin",
     "command.argument.CustomOperationMixin",
+    "invokers.LivingEntityInvoker",
     "predicate.LightPredicateMixin",
     "scoreboard.teamrules.KeepInventoryOnDeathMixin",
     "scoreboard.teamrules.SerializeRulesMixin",
