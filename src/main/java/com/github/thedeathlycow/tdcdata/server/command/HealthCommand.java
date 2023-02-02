@@ -3,6 +3,7 @@ package com.github.thedeathlycow.tdcdata.server.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
@@ -15,13 +16,17 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.Collection;
+
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class HealthCommand {
 
-    private static final String ADD_SUCCESS_SINGLE = "Added %d health to ";
-    private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from ";
+    private static final String ADD_SUCCESS_SINGLE = "Added %f health to ";
+    private static final String REMOVE_SUCCESS_SINGLE = "Removed %f health from ";
+    private static final String ADD_SUCCESS_MULTIPLE = "Added %f health to %d entities";
+    private static final String REMOVE_SUCCESS_MULTIPLE = "Removed %f health from %d entities";
     private static final String GET_CURRENT_SUCCESS = " has %f health";
     private static final String GET_MAX_SUCCESS = " can have a maximum of %f health";
 
@@ -54,14 +59,14 @@ public class HealthCommand {
 
         var removeSubCommand = literal("remove")
                 .then(
-                        argument("target", EntityArgumentType.entity())
+                        argument("targets", EntityArgumentType.entities())
                                 .then(
-                                        argument("amount", IntegerArgumentType.integer(0))
+                                        argument("amount", FloatArgumentType.floatArg(0))
                                                 .executes(context -> {
                                                     return adjust(
                                                             context.getSource(),
-                                                            EntityArgumentType.getEntity(context, "target"),
-                                                            -IntegerArgumentType.getInteger(context, "amount"),
+                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                            -FloatArgumentType.getFloat(context, "amount"),
                                                             true,
                                                             true
                                                     );
@@ -71,8 +76,8 @@ public class HealthCommand {
                                                                 .executes(context -> {
                                                                     return adjust(
                                                                             context.getSource(),
-                                                                            EntityArgumentType.getEntity(context, "target"),
-                                                                            -IntegerArgumentType.getInteger(context, "amount"),
+                                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                                            -FloatArgumentType.getFloat(context, "amount"),
                                                                             BoolArgumentType.getBool(context, "clamp"),
                                                                             true
                                                                     );
@@ -83,14 +88,14 @@ public class HealthCommand {
 
         var addSubCommand = literal("add")
                 .then(
-                        argument("target", EntityArgumentType.entity())
+                        argument("targets", EntityArgumentType.entities())
                                 .then(
-                                        argument("amount", IntegerArgumentType.integer(0))
+                                        argument("amount", FloatArgumentType.floatArg(0))
                                                 .executes(context -> {
                                                     return adjust(
                                                             context.getSource(),
-                                                            EntityArgumentType.getEntity(context, "target"),
-                                                            IntegerArgumentType.getInteger(context, "amount"),
+                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                            FloatArgumentType.getFloat(context, "amount"),
                                                             true,
                                                             false
                                                     );
@@ -100,8 +105,8 @@ public class HealthCommand {
                                                                 .executes(context -> {
                                                                     return adjust(
                                                                             context.getSource(),
-                                                                            EntityArgumentType.getEntity(context, "target"),
-                                                                            IntegerArgumentType.getInteger(context, "amount"),
+                                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                                            FloatArgumentType.getFloat(context, "amount"),
                                                                             BoolArgumentType.getBool(context, "clamp"),
                                                                             false
                                                                     );
@@ -112,13 +117,13 @@ public class HealthCommand {
 
         var setSubCommand = literal("set")
                 .then(
-                        argument("target", EntityArgumentType.entity())
+                        argument("targets", EntityArgumentType.entities())
                                 .then(
-                                        argument("amount", IntegerArgumentType.integer(0))
+                                        argument("amount", FloatArgumentType.floatArg(0))
                                                 .executes(context -> {
                                                     return set(context.getSource(),
-                                                            EntityArgumentType.getEntity(context, "target"),
-                                                            IntegerArgumentType.getInteger(context, "amount"),
+                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                            FloatArgumentType.getFloat(context, "amount"),
                                                             true);
                                                 })
                                                 .then(
@@ -126,8 +131,8 @@ public class HealthCommand {
                                                                 .executes(context -> {
                                                                     return set(
                                                                             context.getSource(),
-                                                                            EntityArgumentType.getEntity(context, "target"),
-                                                                            IntegerArgumentType.getInteger(context, "amount"),
+                                                                            EntityArgumentType.getEntities(context, "targets"),
+                                                                            FloatArgumentType.getFloat(context, "amount"),
                                                                             BoolArgumentType.getBool(context, "clamp")
                                                                     );
                                                                 })
@@ -155,27 +160,35 @@ public class HealthCommand {
      * affected by this command.
      *
      * @param source      The source of the command
-     * @param target      The {@link Entity} affected by this command
+     * @param targets     The {@link Entity}s affected by this command
      * @param amount      The of health to set on each target.
      * @param shouldClamp Whether the amount should be clamped
      * @return Returns the sum of the healths of each target after execution
      * @throws CommandSyntaxException Thrown if <code>target</code> is not a {@link LivingEntity}
      */
-    private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) throws CommandSyntaxException {
-        if (!(target instanceof LivingEntity livingTarget)) {
-            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
+    private static int set(final ServerCommandSource source, Collection<? extends Entity> targets, final float amount, final boolean shouldClamp) throws CommandSyntaxException {
+        int sum = 0;
+
+        for (var target : targets) {
+            if (target instanceof LivingEntity livingTarget) {
+                float newHealth = shouldClamp ? MathHelper.clamp(amount, 0f, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
+                livingTarget.setHealth(newHealth);
+                sum += MathHelper.floor(newHealth);
+            } else if (targets.size() == 1) {
+                throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
+            }
         }
 
-        int newHealth = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
-
-        livingTarget.setHealth(newHealth);
-
-        Text msg = Text.literal("Set the health of ")
-                .append(target.getDisplayName())
-                .append(String.format(" to %f", livingTarget.getHealth()));
+        MutableText msg = Text.literal("Set the health of ");
+        if (targets.size() == 1) {
+            msg.append(targets.iterator().next().getDisplayName())
+                    .append(String.format(" to %f", amount));
+        } else {
+            msg.append(String.format("%d entities to %f", targets.size(), amount));
+        }
 
         source.sendFeedback(msg, true);
-        return newHealth;
+        return sum;
     }
 
     /**
@@ -186,37 +199,51 @@ public class HealthCommand {
      * Returns and displays in chat the number of entities affected by this command.
      *
      * @param source      The source of the command
-     * @param target      The targeted {@link LivingEntity} to adjust the health of.
+     * @param targets     The targeted {@link Entity}s to adjust the health of.
      * @param amount      The amount to adjust by
      * @param shouldClamp Whether to clamp the final amount. Defaults to true.
      * @param isRemoving  Whether this command is removing or adding.
      * @return Returns the sum of the healths of each target after execution
      * @throws CommandSyntaxException Thrown if <code>target</code> is not a {@link LivingEntity}
      */
-    private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) throws CommandSyntaxException {
-        if (!(target instanceof LivingEntity livingTarget)) {
-            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
+    private static int adjust(final ServerCommandSource source, Collection<? extends Entity> targets, final float amount, final boolean shouldClamp, final boolean isRemoving) throws CommandSyntaxException {
+
+        int sum = 0;
+        for (var target : targets) {
+
+            if (target instanceof LivingEntity livingTarget) {
+                float newHealth = livingTarget.getHealth() + amount;
+                if (shouldClamp) {
+                    newHealth = MathHelper.clamp(newHealth, 0f, MathHelper.floor(livingTarget.getMaxHealth()));
+                }
+
+                livingTarget.setHealth(newHealth);
+
+                sum += MathHelper.floor(newHealth);
+            } else if (targets.size() == 1) {
+                throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
+            }
+
         }
 
-        int newHealth = MathHelper.floor(livingTarget.getHealth() + amount);
-        if (shouldClamp) {
-            newHealth = MathHelper.clamp(newHealth, 0, MathHelper.floor(livingTarget.getMaxHealth()));
-        }
-
-        livingTarget.setHealth(newHealth);
 
         MutableText msg = Text.empty();
         if (isRemoving) {
-            msg.append(String.format(REMOVE_SUCCESS_SINGLE, amount));
+            if (targets.size() == 1) {
+                buildSingleResponseMessage(msg, REMOVE_SUCCESS_SINGLE, targets.iterator().next(), -amount);
+            } else {
+                msg.append(String.format(REMOVE_SUCCESS_MULTIPLE, -amount, targets.size()));
+            }
         } else {
-            msg.append(String.format(ADD_SUCCESS_SINGLE, amount));
+            if (targets.size() == 1) {
+                buildSingleResponseMessage(msg, ADD_SUCCESS_SINGLE, targets.iterator().next(), amount);
+            } else {
+                msg.append(String.format(ADD_SUCCESS_MULTIPLE, amount, targets.size()));
+            }
         }
-
-        msg.append(target.getDisplayName());
-        msg.append(String.format(" (now %f)", livingTarget.getHealth()));
         source.sendFeedback(msg, true);
 
-        return newHealth;
+        return sum;
     }
 
     /**
@@ -266,5 +293,13 @@ public class HealthCommand {
 
         source.sendFeedback(msg, true);
         return MathHelper.floor(amount);
+    }
+
+    private static void buildSingleResponseMessage(MutableText text, String message, Entity target, float amount) {
+        if (target instanceof LivingEntity livingTarget) {
+            text.append(String.format(message, amount))
+                    .append(target.getDisplayName())
+                    .append(String.format(" (now %f)", livingTarget.getHealth()));
+        }
     }
 }
