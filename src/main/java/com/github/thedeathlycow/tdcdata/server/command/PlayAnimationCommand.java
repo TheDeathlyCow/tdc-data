@@ -47,25 +47,7 @@ public class PlayAnimationCommand {
             }
     );
 
-    private static final DynamicCommandExceptionType SAME_TARGET_EXCEPTION = new DynamicCommandExceptionType(
-            (targetName) -> {
-                return Text.empty()
-                        .append((Text) targetName)
-                        .append(Text.literal(" cannot ride itself"));
-            }
-    );
-
     private static final SimpleCommandExceptionType CANNOT_JUMP_EXCEPTION = new SimpleCommandExceptionType(Text.literal("Target cannot jump"));
-
-    private static final SimpleCommandExceptionType NOT_RIDING_ANYTHING_EXCEPTION = new SimpleCommandExceptionType(Text.literal("Target is not riding anything"));
-
-    private static final DynamicCommandExceptionType CANNOT_RIDE_EXCEPTION = new DynamicCommandExceptionType(
-            (target) -> {
-                return Text.empty()
-                        .append((Text) target)
-                        .append(Text.literal(" is not rideable"));
-            }
-    );
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
 
@@ -88,44 +70,6 @@ public class PlayAnimationCommand {
                                     EntityArgumentType.getEntity(context, "target")
                             );
                         }
-                );
-
-        var rideAnimation = literal("ride")
-                .then(literal("mount")
-                        .then(argument("vehicle", EntityArgumentType.entity())
-                                .executes(
-                                        context -> {
-                                            return executeMount(
-                                                    context.getSource(),
-                                                    EntityArgumentType.getEntity(context, "target"),
-                                                    EntityArgumentType.getEntity(context, "vehicle"),
-                                                    false
-                                            );
-                                        }
-                                )
-                                .then(
-                                        argument("force", BoolArgumentType.bool())
-                                                .executes(
-                                                        context -> {
-                                                            return executeMount(
-                                                                    context.getSource(),
-                                                                    EntityArgumentType.getEntity(context, "target"),
-                                                                    EntityArgumentType.getEntity(context, "vehicle"),
-                                                                    BoolArgumentType.getBool(context, "force")
-                                                            );
-                                                        }
-                                                )
-                                )
-                        )
-                )
-                .then(literal("dismount")
-                        .executes(context -> {
-                                    return executeDismount(
-                                            context.getSource(),
-                                            EntityArgumentType.getEntity(context, "target")
-                                    );
-                                }
-                        )
                 );
 
         var jumpAnimation = literal("jump")
@@ -166,7 +110,6 @@ public class PlayAnimationCommand {
                                                 argument("target", EntityArgumentType.entity())
                                                         .then(swingAnimation)
                                                         .then(hurtAnimation)
-                                                        .then(rideAnimation)
                                                         .then(jumpAnimation)
                                                         .then(warnAnimation)
                                         )
@@ -244,32 +187,7 @@ public class PlayAnimationCommand {
         }
     }
 
-    private static int executeMount(final ServerCommandSource source, Entity target, Entity vehicle, boolean force) throws CommandSyntaxException {
 
-        if (target.getId() == vehicle.getId()) {
-            throw SAME_TARGET_EXCEPTION.create(target.getDisplayName());
-        }
-        if (target.startRiding(vehicle, force)) {
-            Text msg = Text.empty()
-                    .append(target.getDisplayName())
-                    .append(Text.literal(" started riding "))
-                    .append(vehicle.getDisplayName());
-            source.sendFeedback(msg, true);
-            return 1;
-        } else {
-            throw CANNOT_RIDE_EXCEPTION.create(vehicle.getDisplayName());
-        }
-    }
 
-    private static int executeDismount(final ServerCommandSource source, Entity target) throws CommandSyntaxException {
-        if (target.getVehicle() != null) {
-            target.stopRiding();
-            Text msg = Text.literal("Dismounted ") // new way of making text lol
-                    .append(target.getDisplayName());
-            source.sendFeedback(msg, true);
-        } else {
-            throw NOT_RIDING_ANYTHING_EXCEPTION.create();
-        }
-        return 1;
-    }
+
 }

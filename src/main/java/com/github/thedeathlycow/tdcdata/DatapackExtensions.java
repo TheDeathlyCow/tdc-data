@@ -34,6 +34,7 @@ public class DatapackExtensions implements ModInitializer {
                     MotionCommand.register(dispatcher, registryAccess);
                     SuperEnchantCommand.register(dispatcher, registryAccess);
                     PlayAnimationCommand.register(dispatcher, registryAccess);
+                    RideCommand.register(dispatcher, registryAccess);
                     FreezeCommand.register(dispatcher, registryAccess);
                     HealthCommand.register(dispatcher, registryAccess);
                     TeamModifyCommandAdditions.register(dispatcher, registryAccess);
