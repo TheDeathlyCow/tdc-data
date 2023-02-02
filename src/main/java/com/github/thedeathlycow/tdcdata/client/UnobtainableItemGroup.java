@@ -41,7 +41,6 @@ public class UnobtainableItemGroup {
                     stacks.add(Items.JIGSAW.getDefaultStack());
                     stacks.add(Items.STRUCTURE_VOID.getDefaultStack());
                     stacks.add(Items.KNOWLEDGE_BOOK.getDefaultStack());
-                    stacks.add(Items.SCULK_SENSOR.getDefaultStack());
                     stacks.add(Items.BUNDLE.getDefaultStack());
                     stacks.add(Items.DRAGON_EGG.getDefaultStack());
                     stacks.add(Items.SPAWNER.getDefaultStack());
