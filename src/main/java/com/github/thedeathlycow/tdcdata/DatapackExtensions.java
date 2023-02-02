@@ -5,6 +5,8 @@ import com.github.thedeathlycow.tdcdata.scoreboard.stat.TdcDataCustomStats;
 import com.github.thedeathlycow.tdcdata.server.command.*;
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.NbtTypesArgumentType;
+import com.github.thedeathlycow.tdcdata.server.command.argument.RelativeVec3ArgumentType;
+import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -23,6 +25,7 @@ public class DatapackExtensions implements ModInitializer {
     public void onInitialize() {
         ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "hand"), HandArgumentType.class, ConstantArgumentSerializer.of(HandArgumentType::hand));
         ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "nbt_type"), NbtTypesArgumentType.class, ConstantArgumentSerializer.of(NbtTypesArgumentType::types));
+        ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "unary_operation"), UnaryOperationArgumentType.class, ConstantArgumentSerializer.of(UnaryOperationArgumentType::unaryOperation));
 
         TdcDataCustomStats.registerCustomStats();
 

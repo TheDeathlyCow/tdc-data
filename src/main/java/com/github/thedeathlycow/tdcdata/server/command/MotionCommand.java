@@ -1,21 +1,17 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.PosArgument;
 import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -23,44 +19,49 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class MotionCommand {
 
-    private static final String MOVE_SUCCESS = "Animated move for %s with force %s";
-
-    private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
-            (targetName) -> {
-                return Text.literal(String.format("%s is not a living entity", targetName));
-            }
+    public static final SimpleCommandExceptionType ONLY_RELATIVE_COORDINATES_EXCEPTION = new SimpleCommandExceptionType(
+            Text.literal("Can only have relative coordinates!")
     );
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
+        var motion = argument("target", EntityArgumentType.entity())
+                .then(argument("motion", Vec3ArgumentType.vec3(false))
+                        .executes(context -> {
+                                    return executeMove(context.getSource(),
+                                            EntityArgumentType.getEntity(context, "target"),
+                                            Vec3ArgumentType.getPosArgument(context, "motion"));
+                                }
+                        )
+                );
+
         dispatcher.register(
-                (literal("motion").requires((src) -> src.hasPermissionLevel(2)))
-                        .then(argument("target", EntityArgumentType.entity())
-                                .then(argument("offset", Vec3ArgumentType.vec3())
-                                        .executes(context -> {
-                                            return executeMove(context.getSource(),
-                                                    EntityArgumentType.getEntity(context, "target"),
-                                                    Vec3ArgumentType.getVec3(context, "offset"));
-                                        })))
+                literal("tdcdata")
+                        .then(
+                                (literal("motion").requires((src) -> src.hasPermissionLevel(2)))
+                                        .then(motion)
+                        )
         );
     }
 
-    private static int executeMove(final ServerCommandSource source, Entity target, Vec3d amount) throws CommandSyntaxException {
-        Vec3d relative = source.getPosition().subtract(amount);
-        relative = relative.negate();
-        target.addVelocity(relative.x, relative.y, relative.z);
+    private static int executeMove(final ServerCommandSource source, Entity target, PosArgument motion) throws CommandSyntaxException {
 
-        //if (source.getPlayer() != null) {
-        //    ServerPlayerEntity player = source.getPlayer();
-        //    player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(target.getId(), new Vec3d(0, 0.5, 0)));
-        //}
-
-        if (target instanceof ServerPlayerEntity player) {
-            player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(target.getId(), relative));
+        if (!motion.isXRelative() || !motion.isYRelative() || !motion.isZRelative()) {
+            throw ONLY_RELATIVE_COORDINATES_EXCEPTION.create();
         }
 
-        Text msg = Text.literal(String.format(MOVE_SUCCESS, target.getDisplayName().getString(), relative));
+        Vec3d motionVector = motion.toAbsolutePos(source).subtract(target.getPos());
+
+        target.addVelocity(motionVector.x, motionVector.y, motionVector.z);
+
+        if (target instanceof ServerPlayerEntity player) {
+            player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player.getId(), motionVector));
+        }
+
+        Text msg = Text.literal(String.format("Applied %s motion to ", motionVector))
+                .append(target.getDisplayName());
+
         source.sendFeedback(msg, true);
 
-        return 1;
+        return (int) motionVector.length();
     }
 }
