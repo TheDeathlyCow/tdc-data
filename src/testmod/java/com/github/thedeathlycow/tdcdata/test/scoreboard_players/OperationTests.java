@@ -1,6 +1,7 @@
 package com.github.thedeathlycow.tdcdata.test.scoreboard_players;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;

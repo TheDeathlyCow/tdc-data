@@ -1,6 +1,5 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
-import com.github.thedeathlycow.tdcdata.DatapackExtensionsTranslator;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -19,6 +18,16 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class FreezeCommand {
+
+    private static final String ADD_SUCCESS_SINGLE = "Added %d frozen ticks to %s (now %d)";
+    private static final String ADD_SUCCESS_MULTIPLE = "Added %d frozen ticks to %d targets";
+    private static final String REMOVE_SUCCESS_SINGLE = "Removed %d frozen ticks from %s (now %d)";
+    private static final String REMOVE_SUCCESS_MULTIPLE = "Removed %d frozen ticks from %d targets";
+    private static final String SET_SUCCESS_SINGLE = "Set the frozen ticks of %s to %d";
+    private static final String SET_SUCCESS_MULTIPLE = "Set the frozen ticks of %d targets to %d";
+    private static final String GET_CURRENT_SUCCESS = "%s has %d frozen ticks";
+    private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d frozen ticks";
+    private static final String GET_PROGRESS_SUCCESS = "%s is %d%% frozen";
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
 
@@ -180,9 +189,9 @@ public class FreezeCommand {
         Text msg;
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
-            msg = DatapackExtensionsTranslator.translateAsText("commands.freeze.set_single", target.getDisplayName().getString(), amount);
+            msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
         } else {
-            msg = DatapackExtensionsTranslator.translateAsText("commands.freeze.set_multiple", targets.size(), amount);
+            msg = Text.literal(String.format(SET_SUCCESS_MULTIPLE, targets.size(), amount));
         }
         source.sendFeedback(msg, true);
 
@@ -218,11 +227,11 @@ public class FreezeCommand {
         Text msg;
         if (targets.size() == 1) {
             Entity target = targets.iterator().next();
-            String format = isRemoving ? "commands.freeze.remove_single" : "commands.freeze.add_single";
-            msg = DatapackExtensionsTranslator.translateAsText(format, MathHelper.abs(amount), target.getDisplayName().getString(), target.getFrozenTicks());
+            String format = isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE;
+            msg = Text.literal(String.format(format, MathHelper.abs(amount), target.getDisplayName().getString(), target.getFrozenTicks()));
         } else {
-            String format = isRemoving ? "commands.freeze.remove_multiple" : "commands.freeze.add_multiple";
-            msg = DatapackExtensionsTranslator.translateAsText(format, MathHelper.abs(amount), targets.size());
+            String format = isRemoving ? REMOVE_SUCCESS_MULTIPLE : ADD_SUCCESS_MULTIPLE;
+            msg = Text.literal(String.format(format, MathHelper.abs(amount), targets.size()));
         }
         source.sendFeedback(msg, true);
 
@@ -239,7 +248,7 @@ public class FreezeCommand {
      */
     private static int getCurrent(final ServerCommandSource source, final Entity target) {
         int amount = target.getFrozenTicks();
-        Text msg = DatapackExtensionsTranslator.translateAsText("commands.freeze.get_current", target.getDisplayName().getString(), amount);
+        Text msg = Text.literal(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
@@ -255,7 +264,7 @@ public class FreezeCommand {
      */
     private static int getMax(final ServerCommandSource source, final Entity target) {
         int amount = target.getMinFreezeDamageTicks();
-        Text msg = DatapackExtensionsTranslator.translateAsText("commands.freeze.get_max", target.getDisplayName().getString(), amount);
+        Text msg = Text.literal(String.format(GET_MAX_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
@@ -276,7 +285,7 @@ public class FreezeCommand {
     private static int getProgress(final ServerCommandSource source, final Entity target, final float scale) {
         float progress = target.getFreezingScale();
         int amount = MathHelper.floor(progress * scale);
-        Text msg = DatapackExtensionsTranslator.translateAsText("commands.freeze.get_progress", target.getDisplayName().getString(), amount);
+        Text msg = Text.literal(String.format(GET_PROGRESS_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }

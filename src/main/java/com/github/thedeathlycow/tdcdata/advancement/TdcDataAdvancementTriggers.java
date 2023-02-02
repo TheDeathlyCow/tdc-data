@@ -2,6 +2,7 @@ package com.github.thedeathlycow.tdcdata.advancement;
 
 import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.advancement.criterion.ItemCriterion;
 import net.minecraft.util.Identifier;
 
 public class TdcDataAdvancementTriggers {

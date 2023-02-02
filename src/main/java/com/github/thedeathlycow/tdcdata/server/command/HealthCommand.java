@@ -1,12 +1,11 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
-import com.github.thedeathlycow.tdcdata.DatapackExtensionsExceptions;
-import com.github.thedeathlycow.tdcdata.DatapackExtensionsTranslator;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +18,19 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class HealthCommand {
+
+    private static final String ADD_SUCCESS_SINGLE = "Added %d health to %s (now %d)";
+    private static final String REMOVE_SUCCESS_SINGLE = "Removed %d health from %s (now %d)";
+    private static final String SET_SUCCESS_SINGLE = "Set the health of %s to %d";
+    private static final String GET_CURRENT_SUCCESS = "%s has %d health";
+    private static final String GET_MAX_SUCCESS = "%s can have a maximum of %d health";
+
+    private static final DynamicCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new DynamicCommandExceptionType(
+            (targetName) -> {
+                return Text.literal(String.format("%s is not a living entity", targetName));
+            }
+    );
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
 
         Command<ServerCommandSource> getCurrentLeaf = context -> {
@@ -151,14 +163,14 @@ public class HealthCommand {
      */
     private static int set(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw DatapackExtensionsExceptions.ENTITY_NOT_LIVING_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int newHealth = shouldClamp ? MathHelper.clamp(amount, 0, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
 
         livingTarget.setHealth(newHealth);
 
-        Text msg = DatapackExtensionsTranslator.translateAsText("commands.health.set", target.getDisplayName().getString(), amount);
+        Text msg = Text.literal(String.format(SET_SUCCESS_SINGLE, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return newHealth;
     }
@@ -180,7 +192,7 @@ public class HealthCommand {
      */
     private static int adjust(final ServerCommandSource source, Entity target, final int amount, final boolean shouldClamp, final boolean isRemoving) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw DatapackExtensionsExceptions.ENTITY_NOT_LIVING_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int newHealth = MathHelper.floor(livingTarget.getHealth() + amount);
@@ -191,7 +203,7 @@ public class HealthCommand {
         livingTarget.setHealth(newHealth);
 
         // NOTE: The reason that we run livingTarget.getHealth() is because the setHealth() method may have modified the value we passed in.
-        Text msg = DatapackExtensionsTranslator.translateAsText(isRemoving ? "commands.health.remove" : "commands.health.add", amount, target.getDisplayName().getString(), livingTarget.getHealth());
+        Text msg = Text.literal(String.format(isRemoving ? REMOVE_SUCCESS_SINGLE : ADD_SUCCESS_SINGLE, amount, target.getDisplayName().getString(), livingTarget.getHealth()));
         source.sendFeedback(msg, true);
         return newHealth;
     }
@@ -207,12 +219,12 @@ public class HealthCommand {
      */
     private static int getCurrent(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw DatapackExtensionsExceptions.ENTITY_NOT_LIVING_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
 
         int amount = MathHelper.floor(livingTarget.getHealth());
 
-        Text msg = DatapackExtensionsTranslator.translateAsText("commands.health.get_current", target.getDisplayName().getString(), amount);
+        Text msg = Text.literal(String.format(GET_CURRENT_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }
@@ -229,11 +241,11 @@ public class HealthCommand {
      */
     private static int getMax(final ServerCommandSource source, final Entity target) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity livingTarget)) {
-            throw DatapackExtensionsExceptions.ENTITY_NOT_LIVING_EXCEPTION.create(target.getDisplayName().getString());
+            throw NOT_LIVING_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
         int amount = MathHelper.floor(livingTarget.getMaxHealth());
 
-        Text msg = DatapackExtensionsTranslator.translateAsText("commands.health.get_max", target.getDisplayName().getString(), amount);
+        Text msg = Text.literal(String.format(GET_MAX_SUCCESS, target.getDisplayName().getString(), amount));
         source.sendFeedback(msg, true);
         return amount;
     }

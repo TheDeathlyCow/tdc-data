@@ -1,12 +1,21 @@
 package com.github.thedeathlycow.tdcdata.test.execute_command;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.command.argument.ItemSlotArgumentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardObjective;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ItemCommand;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;

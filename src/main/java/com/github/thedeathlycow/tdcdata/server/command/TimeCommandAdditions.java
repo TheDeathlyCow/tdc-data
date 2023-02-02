@@ -7,6 +7,7 @@ import net.minecraft.text.Text;
 
 import java.time.Instant;
 
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class TimeCommandAdditions {

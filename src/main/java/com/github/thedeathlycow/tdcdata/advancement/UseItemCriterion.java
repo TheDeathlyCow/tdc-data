@@ -4,6 +4,7 @@ import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
+import net.minecraft.advancement.criterion.UsingItemCriterion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
