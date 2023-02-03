@@ -25,11 +25,11 @@ public class PushCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandManager.RegistrationEnvironment registryAccess) {
         var motion = argument("target", EntityArgumentType.entity())
-                .then(argument("motion", Vec3ArgumentType.vec3(false))
+                .then(argument("force", Vec3ArgumentType.vec3(false))
                         .executes(context -> {
                                     return executeMove(context.getSource(),
                                             EntityArgumentType.getEntity(context, "target"),
-                                            Vec3ArgumentType.getPosArgument(context, "motion"));
+                                            Vec3ArgumentType.getPosArgument(context, "force"));
                                 }
                         )
                 );
@@ -43,13 +43,13 @@ public class PushCommand {
         );
     }
 
-    private static int executeMove(final ServerCommandSource source, Entity target, PosArgument motion) throws CommandSyntaxException {
+    private static int executeMove(final ServerCommandSource source, Entity target, PosArgument force) throws CommandSyntaxException {
 
-        if (!motion.isXRelative() || !motion.isYRelative() || !motion.isZRelative()) {
+        if (!force.isXRelative() || !force.isYRelative() || !force.isZRelative()) {
             throw ONLY_RELATIVE_COORDINATES_EXCEPTION.create();
         }
 
-        Vec3d motionVector = motion.toAbsolutePos(source).subtract(target.getPos());
+        Vec3d motionVector = force.toAbsolutePos(source).subtract(target.getPos());
 
         target.addVelocity(motionVector.x, motionVector.y, motionVector.z);
 
