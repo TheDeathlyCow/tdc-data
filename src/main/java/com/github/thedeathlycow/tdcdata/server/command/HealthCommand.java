@@ -173,7 +173,7 @@ public class HealthCommand {
             if (target instanceof LivingEntity livingTarget) {
                 float newHealth = shouldClamp ? MathHelper.clamp(amount, 0f, MathHelper.floor(livingTarget.getMaxHealth())) : amount;
                 livingTarget.setHealth(newHealth);
-                sum += MathHelper.floor(newHealth);
+                sum += MathHelper.floor(livingTarget.getHealth());
             } else if (targets.size() == 1) {
                 throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName());
             }

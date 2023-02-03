@@ -1,6 +1,5 @@
 package com.github.thedeathlycow.tdcdata.scoreboard.stat;
 
-import com.github.thedeathlycow.tdcdata.DatapackExtensions;
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -12,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 
 public class UseStat {
-    static int useBlockCount = 0;
+
     public static void registerEventListeners() {
         // Right click detection
         UseItemCallback.EVENT.register((player, world, hand) -> {
