@@ -1,16 +1,18 @@
 package com.github.thedeathlycow.tdcdata;
 
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
+import com.github.thedeathlycow.tdcdata.data.attribute.item.ItemAttributeLoader;
 import com.github.thedeathlycow.tdcdata.scoreboard.stat.TdcDataCustomStats;
 import com.github.thedeathlycow.tdcdata.server.command.*;
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.NbtTypesArgumentType;
-import com.github.thedeathlycow.tdcdata.server.command.argument.RelativeVec3ArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +25,9 @@ public class DatapackExtensions implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "hand"), HandArgumentType.class, ConstantArgumentSerializer.of(HandArgumentType::hand));
-        ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "nbt_type"), NbtTypesArgumentType.class, ConstantArgumentSerializer.of(NbtTypesArgumentType::types));
-        ArgumentTypeRegistry.registerArgumentType(new Identifier(MODID, "unary_operation"), UnaryOperationArgumentType.class, ConstantArgumentSerializer.of(UnaryOperationArgumentType::unaryOperation));
+        ArgumentTypeRegistry.registerArgumentType(id("hand"), HandArgumentType.class, ConstantArgumentSerializer.of(HandArgumentType::hand));
+        ArgumentTypeRegistry.registerArgumentType(id("nbt_type"), NbtTypesArgumentType.class, ConstantArgumentSerializer.of(NbtTypesArgumentType::types));
+        ArgumentTypeRegistry.registerArgumentType(id("unary_operation"), UnaryOperationArgumentType.class, ConstantArgumentSerializer.of(UnaryOperationArgumentType::unaryOperation));
 
         TdcDataCustomStats.registerCustomStats();
 
@@ -44,7 +46,15 @@ public class DatapackExtensions implements ModInitializer {
         );
         TdcDataAdvancementTriggers.registerTriggers();
 
+        ResourceManagerHelper serverManager = ResourceManagerHelper.get(ResourceType.SERVER_DATA);
+
+        serverManager.registerReloadListener(ItemAttributeLoader.INSTANCE);
+
 
         LOGGER.info("Datapack Extensions initialized!");
+    }
+
+    public static Identifier id(String path) {
+        return new Identifier(MODID, path);
     }
 }
