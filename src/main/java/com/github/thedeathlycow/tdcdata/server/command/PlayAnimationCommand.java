@@ -130,7 +130,7 @@ public class PlayAnimationCommand {
                     .append(target.getDisplayName());
             source.sendFeedback(msg, true);
 
-            return 1;
+            return 0;
         } else {
             throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
@@ -164,7 +164,7 @@ public class PlayAnimationCommand {
         } else {
             throw CANNOT_JUMP_EXCEPTION.create();
         }
-        return 1;
+        return 2;
     }
 
     private static int executeWarn(final ServerCommandSource source, Entity target, boolean state) throws CommandSyntaxException {
@@ -181,7 +181,7 @@ public class PlayAnimationCommand {
                     .append(Text.literal(String.format(" to %s", state)));
             source.sendFeedback(msg, true);
 
-            return 1;
+            return 3;
         } else {
             throw NOT_POLAR_BEAR_ENITY_EXCEPTION.create(target.getDisplayName());
         }
