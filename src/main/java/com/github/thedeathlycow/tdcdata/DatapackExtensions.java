@@ -33,7 +33,7 @@ public class DatapackExtensions implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, dedicated, registryAccess) -> {
-                    MotionCommand.register(dispatcher, registryAccess);
+                    PushCommand.register(dispatcher, registryAccess);
                     SuperEnchantCommand.register(dispatcher, registryAccess);
                     PlayAnimationCommand.register(dispatcher, registryAccess);
                     RideCommand.register(dispatcher, registryAccess);

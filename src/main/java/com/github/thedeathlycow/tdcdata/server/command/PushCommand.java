@@ -17,7 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class MotionCommand {
+public class PushCommand {
 
     public static final SimpleCommandExceptionType ONLY_RELATIVE_COORDINATES_EXCEPTION = new SimpleCommandExceptionType(
             Text.literal("Can only have relative coordinates!")
@@ -37,7 +37,7 @@ public class MotionCommand {
         dispatcher.register(
                 literal("tdcdata")
                         .then(
-                                (literal("motion").requires((src) -> src.hasPermissionLevel(2)))
+                                (literal("push").requires((src) -> src.hasPermissionLevel(2)))
                                         .then(motion)
                         )
         );
