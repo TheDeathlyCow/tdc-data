@@ -60,6 +60,15 @@ public class SuperEnchantCommand {
                                         }
                                 )
                         )
+                        .executes((context) -> {
+                                    return executeEnchant(
+                                            context.getSource(),
+                                            EntityArgumentType.getEntities(context, "targets"),
+                                            EnchantmentArgumentType.getEnchantment(context, "enchantment"),
+                                            1
+                                    );
+                                }
+                        )
                 );
 
         dispatcher.register(
