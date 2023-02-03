@@ -60,9 +60,9 @@ public class ExecuteStoreAttributeCommand {
                                         livingEntity.getName()
                                 )
                         );
+                    } else {
+                        inst.addPersistentModifier(modifier);
                     }
-
-                    inst.addPersistentModifier(modifier);
                 } else {
                     inst.setBaseValue(value);
                 }
