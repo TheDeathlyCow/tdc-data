@@ -41,7 +41,7 @@ public class ItemAttributeLoader implements SimpleSynchronousResourceReloadListe
     public void reload(ResourceManager manager) {
         Map<Identifier, ItemBaseAttributeModifier> newValues = new HashMap<>();
 
-        for (var entry : manager.findResources("frostiful/item_attribute_modifiers", id -> id.getPath().endsWith(".json")).entrySet()) {
+        for (var entry : manager.findResources("tdcdata/item_attribute_modifiers", id -> id.getPath().endsWith(".json")).entrySet()) {
             try (BufferedReader reader = entry.getValue().getReader()) {
 
                 ItemBaseAttributeModifier modifier = ItemBaseAttributeModifier.Serializer.GSON.fromJson(
