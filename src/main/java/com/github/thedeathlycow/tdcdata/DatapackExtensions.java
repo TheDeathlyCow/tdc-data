@@ -1,7 +1,7 @@
 package com.github.thedeathlycow.tdcdata;
 
 import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
-import com.github.thedeathlycow.tdcdata.data.attribute.item.ItemAttributeLoader;
+import com.github.thedeathlycow.tdcdata.data.item.attribute.ItemAttributeLoader;
 import com.github.thedeathlycow.tdcdata.scoreboard.stat.TdcDataCustomStats;
 import com.github.thedeathlycow.tdcdata.server.command.*;
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;

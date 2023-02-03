@@ -1,4 +1,4 @@
-package com.github.thedeathlycow.tdcdata.data.attribute.item;
+package com.github.thedeathlycow.tdcdata.data.item.attribute;
 
 
 import com.google.common.collect.Multimap;
