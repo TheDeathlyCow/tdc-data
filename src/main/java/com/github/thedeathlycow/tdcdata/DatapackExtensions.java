@@ -4,6 +4,7 @@ import com.github.thedeathlycow.tdcdata.advancement.TdcDataAdvancementTriggers;
 import com.github.thedeathlycow.tdcdata.data.attribute.item.ItemAttributeLoader;
 import com.github.thedeathlycow.tdcdata.scoreboard.stat.TdcDataCustomStats;
 import com.github.thedeathlycow.tdcdata.server.command.*;
+import com.github.thedeathlycow.tdcdata.server.command.argument.EntityPoseArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.NbtTypesArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.UnaryOperationArgumentType;
@@ -28,6 +29,7 @@ public class DatapackExtensions implements ModInitializer {
         ArgumentTypeRegistry.registerArgumentType(id("hand"), HandArgumentType.class, ConstantArgumentSerializer.of(HandArgumentType::hand));
         ArgumentTypeRegistry.registerArgumentType(id("nbt_type"), NbtTypesArgumentType.class, ConstantArgumentSerializer.of(NbtTypesArgumentType::types));
         ArgumentTypeRegistry.registerArgumentType(id("unary_operation"), UnaryOperationArgumentType.class, ConstantArgumentSerializer.of(UnaryOperationArgumentType::unaryOperation));
+        ArgumentTypeRegistry.registerArgumentType(id("pose"), EntityPoseArgumentType.class, ConstantArgumentSerializer.of(EntityPoseArgumentType::entityPose));
 
         TdcDataCustomStats.registerCustomStats();
 

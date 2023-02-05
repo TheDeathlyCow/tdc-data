@@ -1,6 +1,7 @@
 package com.github.thedeathlycow.tdcdata.server.command;
 
 import com.github.thedeathlycow.tdcdata.mixin.invokers.LivingEntityInvoker;
+import com.github.thedeathlycow.tdcdata.server.command.argument.EntityPoseArgumentType;
 import com.github.thedeathlycow.tdcdata.server.command.argument.HandArgumentType;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -9,6 +10,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -102,6 +104,17 @@ public class PlayAnimationCommand {
                         }
                 );
 
+        var poseAnimation = literal("setpose")
+                .then(argument("pose", EntityPoseArgumentType.entityPose())
+                        .executes(context -> {
+                            return executeSetPose(
+                                    context.getSource(),
+                                    EntityArgumentType.getEntity(context, "target"),
+                                    EntityPoseArgumentType.getEntityPose(context, "pose")
+                            );
+                        })
+                );
+
         dispatcher.register(
                 literal("tdcdata")
                         .then(
@@ -112,9 +125,24 @@ public class PlayAnimationCommand {
                                                         .then(hurtAnimation)
                                                         .then(jumpAnimation)
                                                         .then(warnAnimation)
+                                                        .then(poseAnimation)
                                         )
                         )
         );
+    }
+
+    private static int executeSetPose(ServerCommandSource source, Entity target, EntityPoseArgumentType.EntityPoseId poseId) {
+        EntityPose pose = poseId.getPose();
+
+        target.setPose(pose);
+
+        source.sendFeedback(
+                Text.literal("Updated pose of ")
+                        .append(target.getName()),
+                true
+        );
+
+        return pose.ordinal();
     }
 
     private static int executeSwing(final ServerCommandSource source, Entity target, Hand hand) throws CommandSyntaxException {
@@ -187,8 +215,6 @@ public class PlayAnimationCommand {
             throw NOT_POLAR_BEAR_ENITY_EXCEPTION.create(target.getDisplayName());
         }
     }
-
-
 
 
 }
