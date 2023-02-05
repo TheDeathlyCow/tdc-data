@@ -132,11 +132,14 @@ public class PlayAnimationCommand {
         );
     }
 
-    private static int executeSetPose(ServerCommandSource source, Entity target, EntityPoseArgumentType.EntityPoseId poseId) {
+    private static int executeSetPose(ServerCommandSource source, Entity target, EntityPoseArgumentType.EntityPoseId poseId) throws CommandSyntaxException {
+
+        if (target.isPlayer()) {
+            throw FAILED_ENTITY_EXCEPTION.create(target.getName());
+        }
+
         EntityPose pose = poseId.getPose();
-
         target.setPose(pose);
-
         source.sendFeedback(
                 Text.literal("Updated pose of ")
                         .append(target.getName()),
@@ -150,7 +153,7 @@ public class PlayAnimationCommand {
 
         if (target instanceof LivingEntity livingTarget) {
             if (!target.isAlive()) {
-                throw TARGET_IS_DEAD_EXCEPTION.create(target.getDisplayName());
+                throw TARGET_IS_DEAD_EXCEPTION.create(target.getName());
             }
 
             livingTarget.swingHand(hand, true);
@@ -161,13 +164,13 @@ public class PlayAnimationCommand {
 
             return hand.ordinal();
         } else {
-            throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
+            throw FAILED_ENTITY_EXCEPTION.create(target.getName());
         }
     }
 
     private static int executeHurt(final ServerCommandSource source, Entity target) throws CommandSyntaxException {
         if (!target.isAlive()) {
-            throw TARGET_IS_DEAD_EXCEPTION.create(target.getDisplayName());
+            throw TARGET_IS_DEAD_EXCEPTION.create(target.getName());
         }
 
         int value = 0;
@@ -189,7 +192,7 @@ public class PlayAnimationCommand {
         if (target instanceof MobEntity mob) {
             mob.getJumpControl().setActive();
             Text msg = Text.literal("Played jump animation for ")
-                    .append(target.getDisplayName());
+                    .append(target.getName());
             source.sendFeedback(msg, true);
         } else {
             throw CANNOT_JUMP_EXCEPTION.create();
@@ -201,19 +204,19 @@ public class PlayAnimationCommand {
 
         if (target instanceof PolarBearEntity polarBear) {
             if (!target.isAlive()) {
-                throw TARGET_IS_DEAD_EXCEPTION.create(target.getDisplayName());
+                throw TARGET_IS_DEAD_EXCEPTION.create(target.getName());
             }
 
             polarBear.setWarning(state);
 
             Text msg = Text.literal("Set warning animation state for ")
-                    .append(target.getDisplayName())
+                    .append(target.getName())
                     .append(Text.literal(String.format(" to %s", state)));
             source.sendFeedback(msg, true);
 
             return state ? 1 : 0;
         } else {
-            throw NOT_POLAR_BEAR_ENITY_EXCEPTION.create(target.getDisplayName());
+            throw NOT_POLAR_BEAR_ENITY_EXCEPTION.create(target.getName());
         }
     }
 
