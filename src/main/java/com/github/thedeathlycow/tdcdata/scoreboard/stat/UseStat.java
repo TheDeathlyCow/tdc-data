@@ -16,7 +16,7 @@ public class UseStat {
         // Right click detection
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (!world.isClient) {
-                TdcDataAdvancementTriggers.USE_ITEM.trigger((ServerPlayerEntity) player, player.getStackInHand(hand));
+                TdcDataAdvancementTriggers.USE_ITEM.trigger((ServerPlayerEntity) player, player.getStackInHand(hand), hand);
                 player.incrementStat(TdcDataCustomStats.USE_ITEM);
             }
             return TypedActionResult.pass(ItemStack.EMPTY);
