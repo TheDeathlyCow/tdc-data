@@ -130,7 +130,7 @@ public class PlayAnimationCommand {
                     .append(target.getDisplayName());
             source.sendFeedback(msg, true);
 
-            return 0;
+            return hand.ordinal();
         } else {
             throw FAILED_ENTITY_EXCEPTION.create(target.getDisplayName().getString());
         }
@@ -141,17 +141,18 @@ public class PlayAnimationCommand {
             throw TARGET_IS_DEAD_EXCEPTION.create(target.getDisplayName());
         }
 
+        int value = 0;
         target.getWorld().sendEntityStatus(target, EntityStatuses.DAMAGE_FROM_GENERIC_SOURCE);
-
         if (target instanceof LivingEntityInvoker invoker) {
             invoker.tdcdata$invokePlayHurtSound(DamageSource.GENERIC);
+            value = 1;
         }
 
         Text msg = Text.literal("Played hurt animation for ")
                 .append(target.getDisplayName());
         source.sendFeedback(msg, true);
 
-        return 1;
+        return value;
     }
 
     private static int executeJump(final ServerCommandSource source, Entity target) throws CommandSyntaxException {
@@ -164,7 +165,7 @@ public class PlayAnimationCommand {
         } else {
             throw CANNOT_JUMP_EXCEPTION.create();
         }
-        return 2;
+        return 0;
     }
 
     private static int executeWarn(final ServerCommandSource source, Entity target, boolean state) throws CommandSyntaxException {
@@ -181,7 +182,7 @@ public class PlayAnimationCommand {
                     .append(Text.literal(String.format(" to %s", state)));
             source.sendFeedback(msg, true);
 
-            return 3;
+            return state ? 1 : 0;
         } else {
             throw NOT_POLAR_BEAR_ENITY_EXCEPTION.create(target.getDisplayName());
         }

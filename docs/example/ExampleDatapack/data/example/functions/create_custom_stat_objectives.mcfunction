@@ -1,3 +1,4 @@
+# Creates a scoreboard objective for each custom statistic 
 
 scoreboard objectives add UseItem minecraft.custom:tdcdata.use_item
 scoreboard objectives add UseBlock minecraft.custom:tdcdata.use_block
