@@ -1,6 +1,7 @@
 package com.github.thedeathlycow.tdcdata.mixin.command;
 
 import com.github.thedeathlycow.tdcdata.server.command.ExecuteIfItemCommand;
+import com.github.thedeathlycow.tdcdata.server.command.argument.EntityPoseArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
@@ -10,11 +11,13 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.ItemPredicateArgumentType;
 import net.minecraft.command.argument.ItemSlotArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ExecuteCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,6 +34,28 @@ public abstract class ExecuteIfItemMixin {
     @Invoker("addConditionLogic")
     public static ArgumentBuilder<ServerCommandSource, ?> invokeAddConditonLogic(CommandNode<ServerCommandSource> root, ArgumentBuilder<ServerCommandSource, ?> builder, boolean positive, ExecuteCommand.Condition condition) {
         throw new AssertionError();
+    }
+
+    @Inject(
+            method = "addConditionArguments",
+            at = @At(
+                    value = "TAIL"
+            )
+    )
+    private static void addPoseCondition(CommandNode<ServerCommandSource> root, LiteralArgumentBuilder<ServerCommandSource> argumentBuilder, boolean positive, CommandRegistryAccess commandRegistryAccess, CallbackInfoReturnable<ArgumentBuilder<ServerCommandSource, ?>> cir) {
+        var entityPoseCondition = literal("tdcdata.inpose").then(
+                argument("target", EntityArgumentType.entity()).then(
+                        invokeAddConditonLogic(root, argument("pose", EntityPoseArgumentType.entityPose()), positive, (context) -> {
+                            Entity target = EntityArgumentType.getEntity(context, "target");
+                            EntityPose pose = EntityPoseArgumentType.getEntityPose(context, "pose").getPose();
+                            return target.isInPose(pose);
+                        })
+                )
+        );
+
+        argumentBuilder.then(
+                entityPoseCondition
+        );
     }
 
     @Inject(
