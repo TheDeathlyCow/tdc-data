@@ -1,0 +1,41 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:sculk_shrieker"
+        },
+        "title": "Creative Shrieking",
+        "description": "Trigger a Sculk Shrieker in Creative Mode"
+    },
+    "parent": "minecraft:adventure/root",
+    "criteria": {
+        "trigger_vibration": {
+            "trigger": "tdcdata:player_trigger_sculk_shrieker",
+            "conditions": {
+                "player": [
+                    {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                            "type_specific": {
+                                "type": "player",
+                                "gamemode": "creative"
+                            }
+                        }
+                    }
+                ],
+                "listener": {
+                    "block": {
+                        "blocks": [
+                            "minecraft:sculk_shrieker"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "requirements": [
+        [
+            "trigger_vibration"
+        ]
+    ]
+}

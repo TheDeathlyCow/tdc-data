@@ -1,0 +1,20 @@
+{
+    "trigger": "tdcdata:use_item",
+    "conditions": {
+        "player": {
+            "equipment": {
+                "head": {
+                    "items": [
+                        "minecraft:iron_helmet"
+                    ]
+                }
+            }
+        },
+        "item": {
+            "items": [
+                "minecraft:clock"
+            ]
+        },
+        "hand": "off_hand"
+    }
+}

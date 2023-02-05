@@ -1,0 +1,33 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:sculk_sensor"
+        },
+        "title": "Swimming in Sculk",
+        "description": "Trigger a sculk sensor by swimming"
+    },
+    "parent": "minecraft:adventure/root",
+    "criteria": {
+        "trigger_vibration": {
+            "trigger": "tdcdata:player_trigger_sculk_sensor",
+            "conditions": {
+                "event": {
+                    "tag": "minecraft:vibrations",
+                    "frequency": 3
+                },
+                "listener": {
+                    "block": {
+                        "blocks": [
+                            "minecraft:sculk_sensor"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "requirements": [
+        [
+            "trigger_vibration"
+        ]
+    ]
+}

@@ -1,0 +1,37 @@
+{
+	"display": {
+		"icon": {
+			"item": "minecraft:clock"
+		},
+		"title": "Checking the time",
+		"description": "'Use' a clock in your offhand while wearing an iron helmet"
+	},
+	"parent": "minecraft:adventure/root",
+	"criteria": {
+		"use_item": {
+			"trigger": "tdcdata:use_item",
+			"conditions": {
+				"player": {
+					"equipment": {
+						"head": {
+							"items": [
+								"minecraft:iron_helmet"
+							]
+						}
+					}
+				},
+				"item": {
+					"items": [
+						"minecraft:clock"
+					]
+				},
+				"hand": "off_hand"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"use_item"
+		]
+	]
+}

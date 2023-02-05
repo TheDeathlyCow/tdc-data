@@ -1,0 +1,45 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:warden_spawn_egg"
+        },
+        "title": "I Think He Heard You",
+        "description": "Alert a Warden while walking and wearing diamond boots"
+    },
+    "parent": "minecraft:adventure/root",
+    "criteria": {
+        "trigger_vibration": {
+            "trigger": "tdcdata:player_alerts_warden",
+            "conditions": {
+                "player": [
+                    {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                            "equipment": {
+                                "feet": {
+                                    "items": [
+                                        "minecraft:diamond_boots"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ],
+                "listener": {
+                    "type": "minecraft:warden"
+                },
+                "event": {
+                    "events": [
+                        "minecraft:step"
+                    ]
+                }
+            }
+        }
+    },
+    "requirements": [
+        [
+            "trigger_vibration"
+        ]
+    ]
+}

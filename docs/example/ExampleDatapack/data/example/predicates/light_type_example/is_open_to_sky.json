@@ -1,0 +1,12 @@
+{
+    "condition": "minecraft:location_check",
+    "predicate": {
+        "light": {
+            "light": 15,
+            "tdcdata.type": {
+                "type": "sky",
+                "include_sky_darkness": false
+            }
+        }
+    }
+}
